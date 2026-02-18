@@ -18,6 +18,8 @@ export default function Register() {
   const [password, setPassword] = useState('');
   const [grade, setGrade] = useState('11');
   const [instituteCode, setInstituteCode] = useState('');
+  const [isTeacher, setIsTeacher] = useState(false);
+  const [teacherCode, setTeacherCode] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const { setUser, setToken } = useAuthStore();
