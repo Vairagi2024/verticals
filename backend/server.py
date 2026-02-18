@@ -160,6 +160,7 @@ async def register(data: RegisterRequest):
     
     # Create user
     user_id = f"user_{uuid.uuid4().hex[:12]}"
+    created_at = datetime.now(timezone.utc)
     user_doc = {
         "user_id": user_id,
         "email": data.email,
@@ -168,7 +169,7 @@ async def register(data: RegisterRequest):
         "role": "student",
         "grade": data.grade,
         "picture": None,
-        "created_at": datetime.now(timezone.utc)
+        "created_at": created_at
     }
     
     await db.users.insert_one(user_doc)
