@@ -30,6 +30,7 @@ api_router = APIRouter(prefix="/api")
 # Constants
 JWT_SECRET = os.environ['JWT_SECRET_KEY']
 INSTITUTE_CODE = os.environ['INSTITUTE_CODE']
+TEACHER_CODE = os.environ.get('TEACHER_CODE', 'TEACHER2025')
 EMERGENT_LLM_KEY = os.environ['EMERGENT_LLM_KEY']
 
 # ===== MODELS =====
