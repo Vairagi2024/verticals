@@ -119,28 +119,6 @@ export default function Register() {
             placeholder="Enter code provided by institute"
           />
 
-          <View style={styles.checkboxContainer}>
-            <Checkbox
-              status={isTeacher ? 'checked' : 'unchecked'}
-              onPress={() => setIsTeacher(!isTeacher)}
-            />
-            <Text variant="bodyLarge" style={styles.checkboxLabel}>
-              I'm a teacher
-            </Text>
-          </View>
-
-          {isTeacher && (
-            <TextInput
-              label="Teacher Code"
-              value={teacherCode}
-              onChangeText={setTeacherCode}
-              mode="outlined"
-              autoCapitalize="characters"
-              style={styles.input}
-              placeholder="Enter teacher registration code"
-            />
-          )}
-
           {error ? <Text style={styles.error}>{error}</Text> : null}
 
           <Button
