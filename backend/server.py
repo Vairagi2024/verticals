@@ -153,6 +153,11 @@ async def register(data: RegisterRequest):
     if data.institute_code != INSTITUTE_CODE:
         raise HTTPException(status_code=400, detail="Invalid institute code")
     
+    # If registering as teacher, validate teacher code
+    if data.is_teacher:
+        if not data.teacher_code or data.teacher_code != TEACHER_CODE:
+            raise HTTPException(status_code=400, detail="Invalid teacher code")
+    
     # Check if user exists
     existing = await db.users.find_one({"email": data.email}, {"_id": 0})
     if existing:
@@ -160,6 +165,9 @@ async def register(data: RegisterRequest):
     
     # Hash password
     password_hash = bcrypt.hashpw(data.password.encode(), bcrypt.gensalt()).decode()
+    
+    # Determine role
+    role = "teacher" if data.is_teacher else "student"
     
     # Create user
     user_id = f"user_{uuid.uuid4().hex[:12]}"
@@ -169,7 +177,7 @@ async def register(data: RegisterRequest):
         "email": data.email,
         "name": data.name,
         "password_hash": password_hash,
-        "role": "student",
+        "role": role,
         "grade": data.grade,
         "picture": None,
         "created_at": created_at
@@ -192,7 +200,7 @@ async def register(data: RegisterRequest):
         "user_id": user_id,
         "email": data.email,
         "name": data.name,
-        "role": "student",
+        "role": role,
         "grade": data.grade,
         "picture": None,
         "created_at": created_at.isoformat()
