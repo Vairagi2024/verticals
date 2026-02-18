@@ -7,7 +7,7 @@ import {
   Platform,
   TouchableOpacity,
 } from 'react-native';
-import { Text, TextInput, Button, SegmentedButtons, Checkbox } from 'react-native-paper';
+import { Text, TextInput, Button, SegmentedButtons } from 'react-native-paper';
 import { useRouter } from 'expo-router';
 import { api } from '../../utils/api';
 import { useAuthStore } from '../../store/authStore';
