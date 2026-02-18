@@ -186,13 +186,13 @@ async def register(data: RegisterRequest):
     
     # Prepare user response
     user_response = {
-        "user_id": user_doc["user_id"],
-        "email": user_doc["email"],
-        "name": user_doc["name"],
-        "role": user_doc["role"],
-        "grade": user_doc["grade"],
-        "picture": user_doc["picture"],
-        "created_at": user_doc["created_at"].isoformat()
+        "user_id": user_id,
+        "email": data.email,
+        "name": data.name,
+        "role": "student",
+        "grade": data.grade,
+        "picture": None,
+        "created_at": created_at.isoformat()
     }
     response = JSONResponse(content={"user": user_response, "session_token": session_token})
     response.set_cookie(
