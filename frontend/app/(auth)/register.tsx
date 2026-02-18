@@ -29,11 +29,6 @@ export default function Register() {
       return;
     }
 
-    if (isTeacher && !teacherCode) {
-      setError('Please enter teacher code');
-      return;
-    }
-
     try {
       setLoading(true);
       setError('');
@@ -43,8 +38,7 @@ export default function Register() {
         password,
         grade: parseInt(grade),
         institute_code: instituteCode,
-        is_teacher: isTeacher,
-        teacher_code: isTeacher ? teacherCode : undefined,
+        is_teacher: false,
       });
       setUser(response.data.user);
       await setToken(response.data.session_token);
