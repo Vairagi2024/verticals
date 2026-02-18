@@ -226,8 +226,17 @@ async def login(data: LoginRequest):
     }
     await db.user_sessions.insert_one(session_doc)
     
-    user_doc.pop("password_hash")
-    response = JSONResponse(content={"user": user_doc, "session_token": session_token})
+    # Prepare user response
+    user_response = {
+        "user_id": user_doc["user_id"],
+        "email": user_doc["email"],
+        "name": user_doc["name"],
+        "role": user_doc["role"],
+        "grade": user_doc.get("grade"),
+        "picture": user_doc.get("picture"),
+        "created_at": user_doc["created_at"].isoformat() if isinstance(user_doc["created_at"], datetime) else user_doc["created_at"]
+    }
+    response = JSONResponse(content={"user": user_response, "session_token": session_token})
     response.set_cookie(
         key="session_token",
         value=session_token,
