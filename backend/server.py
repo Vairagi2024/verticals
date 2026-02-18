@@ -292,9 +292,19 @@ async def google_auth_callback(session_id: str):
     
     # Get full user data
     user = await db.users.find_one({"user_id": user_id}, {"_id": 0})
-    user.pop("password_hash", None)
     
-    response = JSONResponse(content={"user": user, "session_token": user_data["session_token"]})
+    # Prepare user response
+    user_response = {
+        "user_id": user["user_id"],
+        "email": user["email"],
+        "name": user["name"],
+        "role": user["role"],
+        "grade": user.get("grade"),
+        "picture": user.get("picture"),
+        "created_at": user["created_at"].isoformat() if isinstance(user["created_at"], datetime) else user["created_at"]
+    }
+    
+    response = JSONResponse(content={"user": user_response, "session_token": user_data["session_token"]})
     response.set_cookie(
         key="session_token",
         value=user_data["session_token"],
