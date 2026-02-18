@@ -180,7 +180,16 @@ export default function Login() {
             style={styles.link}
           >
             <Text style={styles.linkText}>
-              Don't have an account? Register
+              Don't have an account? Register as Student
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() => router.push('/(auth)/register-teacher')}
+            style={styles.link}
+          >
+            <Text style={styles.teacherLinkText}>
+              Are you a teacher? Register Here
             </Text>
           </TouchableOpacity>
         </View>
