@@ -101,3 +101,288 @@
 #====================================================================================================
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
+
+user_problem_statement: |
+  Build a coaching institute app for Vertical Studies in Chandigarh.
+  Features: Authentication (username/password + Google OAuth), student self-registration with institute code,
+  subject pages for Physics/Chemistry/Maths, content management (videos, photos, documents),
+  quiz maker with timer, AI-powered quiz generation, quiz attempts with results tracking.
+
+backend:
+  - task: "User Authentication - Registration"
+    implemented: true
+    working: true
+    file: "server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Implemented student registration with institute code validation. Fixed datetime serialization issues. Tested successfully with curl."
+
+  - task: "User Authentication - Login"
+    implemented: true
+    working: true
+    file: "server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Implemented username/password login with bcrypt password hashing. Fixed datetime serialization."
+
+  - task: "User Authentication - Google OAuth"
+    implemented: true
+    working: "NA"
+    file: "server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Implemented Emergent Google OAuth integration. Fixed security vulnerability and datetime serialization. Needs testing with actual OAuth flow."
+
+  - task: "User Authentication - Session Management"
+    implemented: true
+    working: true
+    file: "server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Implemented session token management with 7-day expiry. Tested /api/auth/me endpoint successfully."
+
+  - task: "Subjects API"
+    implemented: true
+    working: true
+    file: "server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Created default subjects for Grade 11 & 12 (Physics, Chemistry, Maths). GET /api/subjects returns grade-filtered subjects. Tested successfully."
+
+  - task: "Content Management API"
+    implemented: true
+    working: "NA"
+    file: "server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Implemented POST /api/content for uploading videos/photos/documents, GET /api/content/{subject_id}, DELETE /api/content/{content_id}. Uses base64 for file storage. Needs testing."
+
+  - task: "Quiz Management API"
+    implemented: true
+    working: "NA"
+    file: "server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Implemented POST /api/quiz for creating quizzes, GET /api/quiz/{subject_id}, GET /api/quiz/detail/{quiz_id}. Needs testing."
+
+  - task: "Quiz Attempt API"
+    implemented: true
+    working: "NA"
+    file: "server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Implemented POST /api/quiz/attempt for submitting quiz answers, GET /api/quiz/results/{student_id}. Auto-calculates scores. Needs testing."
+
+  - task: "AI Quiz Generation"
+    implemented: true
+    working: "NA"
+    file: "server.py"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Implemented POST /api/ai/generate-quiz using OpenAI GPT-5.2 with Emergent LLM key. Generates MCQ questions based on topic. Needs testing."
+
+frontend:
+  - task: "Authentication UI - Login Screen"
+    implemented: true
+    working: "NA"
+    file: "app/(auth)/login.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Implemented login screen with email/password fields and Google OAuth button. Handles deep linking for OAuth callback."
+
+  - task: "Authentication UI - Registration Screen"
+    implemented: true
+    working: "NA"
+    file: "app/(auth)/register.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Implemented registration screen with name, email, password, grade selection (11/12), and institute code input."
+
+  - task: "Main Navigation - Tab Layout"
+    implemented: true
+    working: "NA"
+    file: "app/(tabs)/_layout.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Implemented bottom tab navigation with Home, Subjects, Quizzes, Profile tabs."
+
+  - task: "Home Dashboard"
+    implemented: true
+    working: "NA"
+    file: "app/(tabs)/index.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Implemented home screen with user profile, quiz statistics, institute info, and quick actions."
+
+  - task: "Subjects List"
+    implemented: true
+    working: "NA"
+    file: "app/(tabs)/subjects.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Implemented subjects list screen showing Physics, Chemistry, Maths cards with navigation to subject detail."
+
+  - task: "Subject Detail with Content Management"
+    implemented: true
+    working: "NA"
+    file: "app/subject/[id].tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Implemented subject detail with content display (photos, videos, documents) and quiz list. Teachers get FAB menu for uploading content and creating quizzes."
+
+  - task: "Quiz Creation Screen"
+    implemented: true
+    working: "NA"
+    file: "app/quiz/create.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Implemented quiz creation screen with manual question entry and AI generation feature. Teachers can add/remove questions, set options, mark correct answers."
+
+  - task: "Quiz Attempt Screen with Timer"
+    implemented: true
+    working: "NA"
+    file: "app/quiz/[id].tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Implemented quiz attempt screen with countdown timer, question display, radio button options, auto-submit on timeout, and result modal."
+
+  - task: "Quiz Results Screen"
+    implemented: true
+    working: "NA"
+    file: "app/(tabs)/quizzes.tsx"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Implemented quiz results history screen showing all student attempts with scores and timestamps."
+
+  - task: "Profile Screen"
+    implemented: true
+    working: "NA"
+    file: "app/(tabs)/profile.tsx"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Implemented profile screen with user info, institute details, and logout functionality."
+
+metadata:
+  created_by: "main_agent"
+  version: "1.0"
+  test_sequence: 1
+  run_ui: false
+
+test_plan:
+  current_focus:
+    - "User Authentication - Registration"
+    - "User Authentication - Login"
+    - "User Authentication - Session Management"
+    - "Subjects API"
+    - "Content Management API"
+    - "Quiz Management API"
+    - "Quiz Attempt API"
+    - "AI Quiz Generation"
+  stuck_tasks: []
+  test_all: true
+  test_priority: "high_first"
+
+agent_communication:
+  - agent: "main"
+    message: |
+      Initial implementation complete. All backend endpoints implemented and basic curl tests passing.
+      
+      Backend Status:
+      - Authentication (register/login) working with proper datetime serialization
+      - Session management working
+      - Subjects API working and returning grade-filtered subjects
+      - Content management, quiz management, quiz attempts, and AI generation endpoints implemented but need testing
+      
+      Frontend Status:
+      - All screens implemented with React Native Paper UI components
+      - Navigation structure complete with bottom tabs
+      - Auth flow with Google OAuth deep linking
+      - Content upload with image picker, document picker
+      - Quiz creation with AI generation
+      - Quiz attempt with timer
+      
+      Testing Needed:
+      1. Test all backend endpoints with curl
+      2. Test content upload with base64 encoding
+      3. Test quiz creation and attempt flow end-to-end
+      4. Test AI quiz generation with sample topics
+      5. Verify session management and authentication on all protected routes
+      
+      Institute Code for registration: VERTICAL2025
+      Test user created: john@test.com / password123 (Grade 12)
