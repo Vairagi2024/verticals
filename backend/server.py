@@ -57,6 +57,8 @@ class RegisterRequest(BaseModel):
     password: str
     grade: int  # 11 or 12
     institute_code: str
+    is_teacher: bool = False
+    teacher_code: Optional[str] = None
 
 class LoginRequest(BaseModel):
     email: str
