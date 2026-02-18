@@ -199,13 +199,4 @@ const styles = StyleSheet.create({
     color: '#6200ee',
     fontSize: 16,
   },
-  checkboxContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 16,
-    marginTop: 8,
-  },
-  checkboxLabel: {
-    marginLeft: 8,
-  },
 });
