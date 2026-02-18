@@ -252,4 +252,9 @@ const styles = StyleSheet.create({
     color: '#6200ee',
     fontSize: 16,
   },
+  teacherLinkText: {
+    color: '#0277bd',
+    fontSize: 16,
+    fontWeight: '600',
+  },
 });
