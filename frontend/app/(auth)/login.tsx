@@ -89,13 +89,15 @@ export default function Login() {
   const handleGoogleLogin = async () => {
     try {
       const redirectUrl = Platform.OS === 'web'
-        ? `${BACKEND_URL}/`
+        ? (typeof window !== 'undefined' ? window.location.origin + '/' : BACKEND_URL + '/')
         : Linking.createURL('/');
 
       const authUrl = `https://auth.emergentagent.com/?redirect=${encodeURIComponent(redirectUrl)}`;
 
       if (Platform.OS === 'web') {
-        window.location.href = authUrl;
+        if (typeof window !== 'undefined') {
+          window.location.href = authUrl;
+        }
       } else {
         const result = await WebBrowser.openAuthSessionAsync(authUrl, redirectUrl);
         if (result.type === 'success' && result.url) {
