@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Manage Users - Vertical Studies Admin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #F8F9FB; }
+        .header { background: #6C3AE0; color: white; padding: 20px; }
+        .header h1 { font-size: 24px; margin-top: 10px; }
+        .back-btn { background: rgba(255,255,255,0.3); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; }
+        .container { max-width: 900px; margin: 20px auto; padding: 20px; }
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; }
+        .tab { padding: 12px 24px; cursor: pointer; border: none; background: #e0e0e0; border-radius: 8px; font-size: 14px; font-weight: 500; }
+        .tab.active { background: #6C3AE0; color: white; }
+        .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 16px; }
+        .user-card { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+        .user-info h3 { font-size: 16px; margin-bottom: 4px; }
+        .user-info p { color: #666; font-size: 14px; }
+        .user-badge { display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 500; }
+        .badge-teacher { background: #E3F2FD; color: #1976D2; }
+        .badge-student { background: #E8F5E9; color: #388E3C; }
+        .btn { padding: 10px 20px; background: #6C3AE0; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; }
+        .btn:hover { background: #5a2eb8; }
+        .btn-danger { background: #DC3545; }
+        .btn-danger:hover { background: #c82333; }
+        .btn-secondary { background: #e0e0e0; color: #333; }
+        .empty { text-align: center; padding: 40px; color: #999; }
+        
+        /* Modal Styles */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; }
+        .modal.active { display: flex; justify-content: center; align-items: center; }
+        .modal-content { background: white; padding: 30px; border-radius: 16px; max-width: 400px; width: 90%; }
+        .modal-header { font-size: 20px; font-weight: 600; margin-bottom: 20px; }
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 500; }
+        .form-group input { width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 14px; }
+        .form-group input:focus { border-color: #6C3AE0; outline: none; }
+        .modal-actions { display: flex; gap: 10px; margin-top: 20px; }
+        .modal-actions .btn { flex: 1; }
+        
+        .success-message { background: #D4EDDA; color: #155724; padding: 12px 20px; border-radius: 8px; margin-bottom: 16px; }
+        .error-message { background: #F8D7DA; color: #721C24; padding: 12px 20px; border-radius: 8px; margin-bottom: 16px; }
+        
+        .search-box { margin-bottom: 20px; }
+        .search-box input { width: 100%; padding: 12px 16px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 14px; }
+        .search-box input:focus { border-color: #6C3AE0; outline: none; }
+        
+        .loading { text-align: center; padding: 40px; color: #666; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <button class="back-btn" onclick="window.location.href='/dashboard.html'">← Back to Dashboard</button>
+        <h1>👥 Manage Users</h1>
+    </div>
+    
+    <div class="container">
+        <div id="message"></div>
+        
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('all')">All Users</button>
+            <button class="tab" onclick="showTab('teachers')">Teachers</button>
+            <button class="tab" onclick="showTab('students')">Students</button>
+        </div>
+        
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Search by name or email..." oninput="filterUsers()">
+        </div>
+        
+        <div id="usersList" class="loading">Loading users...</div>
+    </div>
+    
+    <!-- Change Password Modal -->
+    <div class="modal" id="passwordModal">
+        <div class="modal-content">
+            <div class="modal-header">Change Password</div>
+            <p id="modalUserName" style="color: #666; margin-bottom: 20px;"></p>
+            <div class="form-group">
+                <label>New Password</label>
+                <input type="password" id="newPassword" placeholder="Enter new password (min 4 characters)">
+            </div>
+            <div id="modalError" class="error-message" style="display: none;"></div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                <button class="btn" onclick="submitPasswordChange()">Change Password</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let allUsers = [];
+        let currentFilter = 'all';
+        let selectedUserId = null;
+        
+        // Check if user is admin
+        const user = JSON.parse(localStorage.getItem('user') || 'null');
+        const sessionToken = localStorage.getItem('session_token');
+        
+        if (!user || user.role !== 'admin') {
+            alert('Access denied. Admin only.');
+            window.location.href = '/dashboard.html';
+        }
+        
+        // Load users from API
+        async function loadUsers() {
+            try {
+                const response = await fetch('/api/admin/users', {
+                    headers: {
+                        'Authorization': `Bearer ${sessionToken}`
+                    }
+                });
+                
+                if (response.ok) {
+                    allUsers = await response.json();
+                    renderUsers();
+                } else {
+                    document.getElementById('usersList').innerHTML = '<div class="empty">Failed to load users</div>';
+                }
+            } catch (error) {
+                console.error('Error loading users:', error);
+                document.getElementById('usersList').innerHTML = '<div class="empty">Error loading users</div>';
+            }
+        }
+        
+        function renderUsers() {
+            const container = document.getElementById('usersList');
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            
+            let filteredUsers = allUsers;
+            
+            // Filter by role
+            if (currentFilter === 'teachers') {
+                filteredUsers = filteredUsers.filter(u => u.role === 'teacher');
+            } else if (currentFilter === 'students') {
+                filteredUsers = filteredUsers.filter(u => u.role === 'student');
+            }
+            
+            // Filter by search term
+            if (searchTerm) {
+                filteredUsers = filteredUsers.filter(u => 
+                    (u.name && u.name.toLowerCase().includes(searchTerm)) ||
+                    (u.email && u.email.toLowerCase().includes(searchTerm))
+                );
+            }
+            
+            if (filteredUsers.length === 0) {
+                container.innerHTML = '<div class="empty">No users found</div>';
+                return;
+            }
+            
+            container.innerHTML = filteredUsers.map(u => `
+                <div class="card user-card">
+                    <div class="user-info">
+                        <h3>${u.name || 'N/A'}</h3>
+                        <p>${u.email || u.mobile || 'No contact info'}</p>
+                        ${u.batch_code ? `<p style="font-size: 12px; color: #888;">Batch: ${u.batch_code}</p>` : ''}
+                        <span class="user-badge ${u.role === 'teacher' ? 'badge-teacher' : 'badge-student'}">
+                            ${u.role.toUpperCase()}
+                        </span>
+                    </div>
+                    <button class="btn" onclick="openPasswordModal('${u.user_id}', '${u.name || 'User'}')">
+                        🔑 Change Password
+                    </button>
+                </div>
+            `).join('');
+        }
+        
+        function showTab(filter) {
+            currentFilter = filter;
+            
+            // Update tab styling
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            renderUsers();
+        }
+        
+        function filterUsers() {
+            renderUsers();
+        }
+        
+        function openPasswordModal(userId, userName) {
+            selectedUserId = userId;
+            document.getElementById('modalUserName').textContent = `Changing password for: ${userName}`;
+            document.getElementById('newPassword').value = '';
+            document.getElementById('modalError').style.display = 'none';
+            document.getElementById('passwordModal').classList.add('active');
+        }
+        
+        function closeModal() {
+            document.getElementById('passwordModal').classList.remove('active');
+            selectedUserId = null;
+        }
+        
+        async function submitPasswordChange() {
+            const newPassword = document.getElementById('newPassword').value;
+            const errorDiv = document.getElementById('modalError');
+            
+            if (newPassword.length < 4) {
+                errorDiv.textContent = 'Password must be at least 4 characters';
+                errorDiv.style.display = 'block';
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/admin/users/${selectedUserId}/password`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${sessionToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ new_password: newPassword })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    closeModal();
+                    showMessage(data.message, 'success');
+                } else {
+                    errorDiv.textContent = data.detail || 'Failed to change password';
+                    errorDiv.style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                errorDiv.textContent = 'Network error. Please try again.';
+                errorDiv.style.display = 'block';
+            }
+        }
+        
+        function showMessage(text, type) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.innerHTML = `<div class="${type === 'success' ? 'success-message' : 'error-message'}">${text}</div>`;
+            
+            setTimeout(() => {
+                messageDiv.innerHTML = '';
+            }, 5000);
+        }
+        
+        // Close modal on outside click
+        document.getElementById('passwordModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+        
+        // Initialize
+        loadUsers();
+    </script>
+</body>
+</html>
