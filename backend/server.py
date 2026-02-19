@@ -504,6 +504,52 @@ async def get_admin_analytics(user: User = Depends(require_admin)):
         "total_videos": total_videos
     }
 
+# Admin: Get all users (teachers and students)
+@api_router.get("/admin/users")
+async def get_all_users(user: User = Depends(require_admin)):
+    users = await db.users.find(
+        {"role": {"$in": ["teacher", "student"]}},
+        {"_id": 0, "password_hash": 0}
+    ).to_list(10000)
+    return users
+
+# Admin: Change password for any user
+class ChangePasswordRequest(BaseModel):
+    new_password: str
+
+@api_router.put("/admin/users/{user_id}/password")
+async def admin_change_password(
+    user_id: str,
+    data: ChangePasswordRequest,
+    user: User = Depends(require_admin)
+):
+    # Find the target user
+    target_user = await db.users.find_one({"user_id": user_id})
+    if not target_user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Don't allow changing admin password through this endpoint
+    if target_user.get("role") == "admin":
+        raise HTTPException(status_code=403, detail="Cannot change admin password through this endpoint")
+    
+    # Validate password length
+    if len(data.new_password) < 4:
+        raise HTTPException(status_code=400, detail="Password must be at least 4 characters")
+    
+    # Hash new password
+    new_password_hash = bcrypt.hashpw(data.new_password.encode(), bcrypt.gensalt()).decode()
+    
+    # Update password
+    await db.users.update_one(
+        {"user_id": user_id},
+        {"$set": {"password_hash": new_password_hash}}
+    )
+    
+    # Invalidate all existing sessions for this user
+    await db.user_sessions.delete_many({"user_id": user_id})
+    
+    return {"message": f"Password changed successfully for user {target_user.get('name', user_id)}"}
+
 # ===== CONTENT MANAGEMENT =====
 
 @api_router.get("/content/subjects")
