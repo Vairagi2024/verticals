@@ -188,15 +188,19 @@ async def require_teacher_or_admin(request: Request) -> User:
 
 @api_router.post("/auth/login/student")
 async def login_student(data: StudentLoginRequest):
-    # Find user by mobile and batch code
+    # Find user by email and batch code
     user_doc = await db.users.find_one({
-        "mobile": data.mobile,
+        "email": data.email,
         "batch_code": data.batch_code,
         "role": "student"
     }, {"_id": 0})
     
     if not user_doc:
-        raise HTTPException(status_code=401, detail="Invalid mobile number or batch code")
+        raise HTTPException(status_code=401, detail="Invalid email or batch code")
+    
+    # Verify password
+    if not bcrypt.checkpw(data.password.encode(), user_doc["password_hash"].encode()):
+        raise HTTPException(status_code=401, detail="Invalid password")
     
     # Create session
     session_token = f"session_{uuid.uuid4().hex}"
@@ -212,9 +216,67 @@ async def login_student(data: StudentLoginRequest):
         "user": {
             "user_id": user_doc["user_id"],
             "name": user_doc["name"],
-            "mobile": user_doc["mobile"],
+            "email": user_doc["email"],
             "role": user_doc["role"],
             "batch_code": user_doc.get("batch_code"),
+        },
+        "session_token": session_token
+    })
+    response.set_cookie(
+        key="session_token",
+        value=session_token,
+        httponly=True,
+        secure=True,
+        samesite="none",
+        path="/",
+        max_age=30 * 24 * 60 * 60
+    )
+    return response
+
+@api_router.post("/auth/register/student")
+async def register_student(data: StudentRegisterRequest):
+    # Check if email exists
+    existing = await db.users.find_one({"email": data.email})
+    if existing:
+        raise HTTPException(status_code=400, detail="Email already registered")
+    
+    # Verify batch exists
+    batch = await db.batches.find_one({"batch_code": data.batch_code})
+    if not batch:
+        raise HTTPException(status_code=400, detail="Invalid batch code")
+    
+    # Hash password
+    password_hash = bcrypt.hashpw(data.password.encode(), bcrypt.gensalt()).decode()
+    
+    student_id = f"student_{uuid.uuid4().hex[:12]}"
+    student_doc = {
+        "user_id": student_id,
+        "email": data.email,
+        "name": data.name,
+        "password_hash": password_hash,
+        "role": "student",
+        "batch_code": data.batch_code,
+        "created_at": datetime.now(timezone.utc)
+    }
+    await db.users.insert_one(student_doc)
+    
+    # Create session
+    session_token = f"session_{uuid.uuid4().hex}"
+    session_doc = {
+        "user_id": student_id,
+        "session_token": session_token,
+        "expires_at": datetime.now(timezone.utc) + timedelta(days=30),
+        "created_at": datetime.now(timezone.utc)
+    }
+    await db.user_sessions.insert_one(session_doc)
+    
+    response = JSONResponse(content={
+        "user": {
+            "user_id": student_id,
+            "name": data.name,
+            "email": data.email,
+            "role": "student",
+            "batch_code": data.batch_code,
         },
         "session_token": session_token
     })
