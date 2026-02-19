@@ -90,8 +90,16 @@
     
     <script>
         let allUsers = [];
+        let subjects = [];
         let currentFilter = 'all';
         let selectedUserId = null;
+        
+        // Subject-teacher mapping
+        const teacherSubjects = {
+            'Jatin Goyal': 'Physics',
+            'Sandeep Vaishnava': 'Chemistry',
+            'Binay Singh': 'Mathematics'
+        };
         
         // Check if user is admin
         const user = JSON.parse(localStorage.getItem('user') || 'null');
@@ -105,6 +113,14 @@
         // Load users from API
         async function loadUsers() {
             try {
+                // Load subjects first
+                const subjectsResponse = await fetch('/api/content/subjects', {
+                    headers: { 'Authorization': `Bearer ${sessionToken}` }
+                });
+                if (subjectsResponse.ok) {
+                    subjects = await subjectsResponse.json();
+                }
+                
                 const response = await fetch('/api/admin/users', {
                     headers: {
                         'Authorization': `Bearer ${sessionToken}`
@@ -121,6 +137,14 @@
                 console.error('Error loading users:', error);
                 document.getElementById('usersList').innerHTML = '<div class="empty">Error loading users</div>';
             }
+        }
+        
+        function getTeacherSubject(teacherName) {
+            // First check from API subjects
+            const subject = subjects.find(s => s.teacher_name === teacherName);
+            if (subject) return subject.name;
+            // Fallback to static mapping
+            return teacherSubjects[teacherName] || null;
         }
         
         function renderUsers() {
@@ -149,12 +173,15 @@
                 return;
             }
             
-            container.innerHTML = filteredUsers.map(u => `
+            container.innerHTML = filteredUsers.map(u => {
+                const subjectName = u.role === 'teacher' ? getTeacherSubject(u.name) : null;
+                return `
                 <div class="card user-card">
                     <div class="user-info">
                         <h3>${u.name || 'N/A'}</h3>
                         <p>${u.email || u.mobile || 'No contact info'}</p>
                         ${u.batch_code ? `<p style="font-size: 12px; color: #888;">Batch: ${u.batch_code}</p>` : ''}
+                        ${subjectName ? `<p style="font-size: 12px; color: #6C3AE0; font-weight: 500;">📚 ${subjectName}</p>` : ''}
                         <span class="user-badge ${u.role === 'teacher' ? 'badge-teacher' : 'badge-student'}">
                             ${u.role.toUpperCase()}
                         </span>
@@ -163,7 +190,7 @@
                         🔑 Change Password
                     </button>
                 </div>
-            `).join('');
+            `}).join('');
         }
         
         function showTab(filter) {
