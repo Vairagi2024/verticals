@@ -7,6 +7,9 @@ import {
   Image,
   RefreshControl,
   Alert,
+  TextInput,
+  Modal,
+  Platform,
 } from 'react-native';
 import { Text, Button, FAB, Chip, Card } from 'react-native-paper';
 import { useLocalSearchParams, useRouter } from 'expo-router';
