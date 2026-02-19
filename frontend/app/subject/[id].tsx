@@ -390,6 +390,36 @@ export default function SubjectDetail() {
           />
         </>
       )}
+      
+      {/* Cross-platform prompt modal */}
+      <Modal
+        visible={promptModal}
+        transparent
+        animationType="fade"
+        onRequestClose={handlePromptCancel}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>{promptTitle}</Text>
+            <Text style={styles.modalMessage}>{promptMessage}</Text>
+            <TextInput
+              style={styles.modalInput}
+              value={promptValue}
+              onChangeText={setPromptValue}
+              placeholder="Enter value..."
+              autoFocus
+            />
+            <View style={styles.modalButtons}>
+              <TouchableOpacity style={styles.modalButton} onPress={handlePromptCancel}>
+                <Text style={styles.modalButtonText}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={[styles.modalButton, styles.modalButtonPrimary]} onPress={handlePromptSubmit}>
+                <Text style={[styles.modalButtonText, styles.modalButtonTextPrimary]}>OK</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
