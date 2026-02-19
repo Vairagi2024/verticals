@@ -5,29 +5,16 @@ import { useRouter } from 'expo-router';
 import { api } from '../utils/api';
 
 export default function Index() {
-  const { token, isLoading, setUser, setLoading, loadAuth } = useAuthStore();
+  const { token, setUser } = useAuthStore();
   const router = useRouter();
-  const [checked, setChecked] = React.useState(false);
 
   useEffect(() => {
-    initAuth();
+    checkAuth();
   }, []);
-
-  const initAuth = async () => {
-    // Load auth from storage first
-    await loadAuth();
-    setChecked(true);
-  };
-
-  useEffect(() => {
-    if (checked) {
-      checkAuth();
-    }
-  }, [checked, token]);
 
   const checkAuth = async () => {
     if (!token) {
-      router.replace('/(auth)/login');
+      router.replace('/login/role-selection');
       return;
     }
 
@@ -37,13 +24,13 @@ export default function Index() {
       router.replace('/(tabs)');
     } catch (error) {
       console.error('Auth check failed:', error);
-      router.replace('/(auth)/login');
+      router.replace('/login/role-selection');
     }
   };
 
   return (
     <View style={styles.container}>
-      <ActivityIndicator size="large" color="#6200ee" />
+      <ActivityIndicator size="large" color="#6C3AE0" />
     </View>
   );
 }
