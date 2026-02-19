@@ -137,20 +137,36 @@ export default function SubjectDetail() {
   };
 
   const handleAddVideoLink = () => {
-    Alert.prompt('Add Video Link', 'Enter YouTube or video URL', [
-      { text: 'Cancel', style: 'cancel' },
-      {
-        text: 'Add',
-        onPress: async (url) => {
-          if (url) {
-            const title = await promptForTitle('Video');
-            if (title) {
-              await uploadContent('video_link', title, undefined, url);
+    if (Platform.OS === 'ios') {
+      Alert.prompt('Add Video Link', 'Enter YouTube or video URL', [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Add',
+          onPress: async (url) => {
+            if (url) {
+              const title = await promptForTitle('Video');
+              if (title) {
+                await uploadContent('video_link', title, undefined, url);
+              }
             }
-          }
+          },
         },
-      },
-    ]);
+      ]);
+    } else {
+      // For Android/Web, use modal for URL input
+      setPromptTitle('Add Video Link');
+      setPromptMessage('Enter YouTube or video URL');
+      setPromptValue('');
+      setPromptCallback(() => async (url: string | undefined) => {
+        if (url) {
+          const title = await promptForTitle('Video');
+          if (title) {
+            await uploadContent('video_link', title, undefined, url);
+          }
+        }
+      });
+      setPromptModal(true);
+    }
   };
 
   const promptForTitle = (type: string): Promise<string | undefined> => {
