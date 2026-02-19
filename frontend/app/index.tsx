@@ -125,4 +125,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
     opacity: 0.9,
   },
+  button: {
+    marginTop: 16,
+  },
 });
