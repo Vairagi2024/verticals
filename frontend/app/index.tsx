@@ -1,16 +1,29 @@
 import React, { useEffect } from 'react';
 import { View, StyleSheet, ActivityIndicator } from 'react-native';
 import { useAuthStore } from '../store/authStore';
-import { useRouter } from 'expo-router';
+import { useRouter, useSegments } from 'expo-router';
 import { api } from '../utils/api';
 
 export default function Index() {
-  const { token, setUser } = useAuthStore();
+  const { token, setUser, loadAuth } = useAuthStore();
   const router = useRouter();
+  const segments = useSegments();
+  const [isReady, setIsReady] = React.useState(false);
 
   useEffect(() => {
-    checkAuth();
+    initAuth();
   }, []);
+
+  useEffect(() => {
+    if (isReady) {
+      checkAuth();
+    }
+  }, [isReady, token]);
+
+  const initAuth = async () => {
+    await loadAuth();
+    setIsReady(true);
+  };
 
   const checkAuth = async () => {
     if (!token) {
