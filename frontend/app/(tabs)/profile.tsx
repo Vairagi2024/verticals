@@ -1,6 +1,6 @@
 import React from 'react';
-import { View, StyleSheet, ScrollView, Alert } from 'react-native';
-import { Text, Button, Card, Avatar } from 'react-native-paper';
+import { View, StyleSheet, ScrollView } from 'react-native';
+import { Text, Card, Button, Avatar } from 'react-native-paper';
 import { useAuthStore } from '../../store/authStore';
 import { useRouter } from 'expo-router';
 import { api } from '../../utils/api';
@@ -9,35 +9,31 @@ export default function Profile() {
   const { user, logout } = useAuthStore();
   const router = useRouter();
 
-  const handleLogout = () => {
-    Alert.alert('Logout', 'Are you sure you want to logout?', [
-      { text: 'Cancel', style: 'cancel' },
-      {
-        text: 'Logout',
-        style: 'destructive',
-        onPress: async () => {
-          try {
-            await api.post('/auth/logout');
-          } catch (error) {
-            console.error('Logout error:', error);
-          } finally {
-            await logout();
-            router.replace('/(auth)/login');
-          }
-        },
-      },
-    ]);
+  const handleLogout = async () => {
+    await api.post('/auth/logout');
+    await logout();
+    router.replace('/');
   };
 
   if (!user) return null;
 
+  const getRoleColor = () => {
+    switch (user.role) {
+      case 'admin': return '#6C3AE0';
+      case 'teacher': return '#4A90E2';
+      case 'student': return '#4ECDC4';
+      default: return '#6C3AE0';
+    }
+  };
+
   return (
     <ScrollView style={styles.container}>
-      <View style={styles.header}>
+      <View style={[styles.header, { backgroundColor: getRoleColor() }]}>
         <Avatar.Text
-          size={100}
+          size={80}
           label={user.name.substring(0, 2).toUpperCase()}
-          style={styles.avatar}
+          style={[styles.avatar, { backgroundColor: 'rgba(255,255,255,0.3)' }]}
+          color="#fff"
         />
         <Text variant="headlineMedium" style={styles.name}>
           {user.name}
@@ -50,6 +46,9 @@ export default function Profile() {
       <View style={styles.content}>
         <Card style={styles.card}>
           <Card.Content>
+            <Text variant="titleMedium" style={styles.cardTitle}>
+              Account Information
+            </Text>
             <View style={styles.infoRow}>
               <Text variant="bodyLarge" style={styles.label}>
                 Role:
@@ -58,14 +57,16 @@ export default function Profile() {
                 {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
               </Text>
             </View>
-            <View style={styles.infoRow}>
-              <Text variant="bodyLarge" style={styles.label}>
-                Grade:
-              </Text>
-              <Text variant="bodyLarge" style={styles.value}>
-                {user.grade}
-              </Text>
-            </View>
+            {user.batch_code && (
+              <View style={styles.infoRow}>
+                <Text variant="bodyLarge" style={styles.label}>
+                  Batch Code:
+                </Text>
+                <Text variant="bodyLarge" style={styles.value}>
+                  {user.batch_code}
+                </Text>
+              </View>
+            )}
           </Card.Content>
         </Card>
 
@@ -102,29 +103,33 @@ export default function Profile() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#F8F9FB',
   },
   header: {
     alignItems: 'center',
-    paddingVertical: 32,
-    backgroundColor: '#fff',
+    paddingVertical: 40,
   },
   avatar: {
-    backgroundColor: '#6200ee',
     marginBottom: 16,
   },
   name: {
     fontWeight: 'bold',
+    color: '#fff',
     marginBottom: 4,
   },
   email: {
-    color: '#666',
+    color: '#fff',
+    opacity: 0.9,
   },
   content: {
     padding: 16,
   },
   card: {
     marginBottom: 16,
+  },
+  cardTitle: {
+    fontWeight: 'bold',
+    marginBottom: 12,
   },
   infoRow: {
     flexDirection: 'row',
@@ -136,10 +141,6 @@ const styles = StyleSheet.create({
   },
   value: {
     fontWeight: '600',
-  },
-  cardTitle: {
-    fontWeight: 'bold',
-    marginBottom: 12,
   },
   instituteText: {
     color: '#666',
