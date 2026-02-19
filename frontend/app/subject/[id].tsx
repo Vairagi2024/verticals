@@ -155,11 +155,36 @@ export default function SubjectDetail() {
 
   const promptForTitle = (type: string): Promise<string | undefined> => {
     return new Promise((resolve) => {
-      Alert.prompt(`${type} Title`, 'Enter a title for this content', [
-        { text: 'Cancel', onPress: () => resolve(undefined), style: 'cancel' },
-        { text: 'OK', onPress: (text) => resolve(text || undefined) },
-      ]);
+      if (Platform.OS === 'ios') {
+        Alert.prompt(`${type} Title`, 'Enter a title for this content', [
+          { text: 'Cancel', onPress: () => resolve(undefined), style: 'cancel' },
+          { text: 'OK', onPress: (text) => resolve(text || undefined) },
+        ]);
+      } else {
+        // For Android/Web, use modal
+        setPromptTitle(`${type} Title`);
+        setPromptMessage('Enter a title for this content');
+        setPromptValue('');
+        setPromptCallback(() => resolve);
+        setPromptModal(true);
+      }
     });
+  };
+  
+  const handlePromptSubmit = () => {
+    if (promptCallback) {
+      promptCallback(promptValue || undefined);
+    }
+    setPromptModal(false);
+    setPromptCallback(null);
+  };
+  
+  const handlePromptCancel = () => {
+    if (promptCallback) {
+      promptCallback(undefined);
+    }
+    setPromptModal(false);
+    setPromptCallback(null);
   };
 
   const uploadContent = async (
