@@ -69,7 +69,7 @@
             const errorDiv = document.getElementById('error');
             
             try {
-                const response = await fetch('/api/auth/login/teacher', {
+                const response = await fetch('https://study-platform-33.preview.emergentagent.com/api/auth/login/teacher', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email, password })

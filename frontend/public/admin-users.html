@@ -114,14 +114,14 @@
         async function loadUsers() {
             try {
                 // Load subjects first
-                const subjectsResponse = await fetch('/api/content/subjects', {
+                const subjectsResponse = await fetch('https://study-platform-33.preview.emergentagent.com/api/content/subjects', {
                     headers: { 'Authorization': `Bearer ${sessionToken}` }
                 });
                 if (subjectsResponse.ok) {
                     subjects = await subjectsResponse.json();
                 }
                 
-                const response = await fetch('/api/admin/users', {
+                const response = await fetch('https://study-platform-33.preview.emergentagent.com/api/admin/users', {
                     headers: {
                         'Authorization': `Bearer ${sessionToken}`
                     }
