@@ -250,7 +250,7 @@
         function renderChapters(chapters) {
             const container = document.getElementById('chapters');
             container.innerHTML = chapters.map((ch, index) => `
-                <div class="card chapter-card" onclick="window.location.href='/api/page/chapter.html?id=${ch.chapter_id}&subject=${subjectId}'">
+                <div class="card chapter-card" onclick="window.location.href='/api/page/chapter?id=${ch.chapter_id}&subject=${subjectId}'">
                     <div>
                         <div class="chapter-title">Chapter ${index + 1}: ${ch.chapter_name}</div>
                         <div class="chapter-meta">${ch.description || 'Click to view topics'}</div>
@@ -263,7 +263,7 @@
         function renderSampleChapters() {
             const container = document.getElementById('chapters');
             container.innerHTML = config.sampleChapters.map((ch, index) => `
-                <div class="card chapter-card" onclick="window.location.href='/api/page/chapter.html?subject=${subjectId}&ch=${index + 1}'">
+                <div class="card chapter-card" onclick="window.location.href='/api/page/chapter?subject=${subjectId}&ch=${index + 1}'">
                     <div>
                         <div class="chapter-title">Chapter ${index + 1}: ${ch.name}</div>
                         <div class="chapter-meta">${ch.topics} topics • ${ch.videos} videos</div>
@@ -309,7 +309,7 @@
             const container = document.getElementById('tests');
             const color = subjectData?.color || config.color;
             container.innerHTML = tests.map(test => `
-                <div class="card" onclick="window.location.href='/api/page/test-attempt.html?id=${test.test_id}'" style="cursor: pointer;">
+                <div class="card" onclick="window.location.href='/api/page/test-attempt?id=${test.test_id}'" style="cursor: pointer;">
                     <div class="chapter-title">📝 ${test.title}</div>
                     <div class="chapter-meta" style="margin-top: 10px;">${test.total_marks} Marks • ${test.duration_mins} Minutes • MCQ</div>
                     <button class="btn" style="margin-top: 12px; background: ${color};">Start Test</button>
@@ -321,7 +321,7 @@
             const container = document.getElementById('tests');
             const color = config.color;
             container.innerHTML = config.sampleTests.map((test, index) => `
-                <div class="card" onclick="window.location.href='/api/page/test-attempt.html?id=test${index + 1}&subject=${subjectId}'" style="cursor: pointer;">
+                <div class="card" onclick="window.location.href='/api/page/test-attempt?id=test${index + 1}&subject=${subjectId}'" style="cursor: pointer;">
                     <div class="chapter-title">📝 ${test.title}</div>
                     <div class="chapter-meta" style="margin-top: 10px;">${test.questions} Questions • ${test.duration} Minutes • MCQ</div>
                     <button class="btn" style="margin-top: 12px; background: ${color};">Start Test</button>
@@ -344,7 +344,7 @@
         }
         
         function showUploadOptions() {
-            window.location.href = `/upload-content.html?subject=${subjectId}`;
+            window.location.href = `/upload-content?subject=${subjectId}`;
         }
 
         function capitalizeFirst(str) {
