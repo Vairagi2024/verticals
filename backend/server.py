@@ -923,6 +923,25 @@ async def startup_event():
         await db.subjects.insert_many(default_subjects)
         print("✅ Default subjects created")
 
+# ===== STATIC FILE SERVING =====
+# Serve HTML pages from frontend/public directory under /api/ prefix
+
+@api_router.get("/page/{filename}")
+async def serve_page(filename: str):
+    """Serve HTML pages - access via /api/page/index, /api/page/dashboard etc"""
+    file_path = FRONTEND_DIR / f"{filename}.html"
+    if file_path.exists():
+        return FileResponse(file_path, media_type="text/html")
+    raise HTTPException(status_code=404, detail="Page not found")
+
+@api_router.get("/home")
+async def serve_home():
+    """Serve home page - access via /api/home"""
+    file_path = FRONTEND_DIR / "index.html"
+    if file_path.exists():
+        return FileResponse(file_path, media_type="text/html")
+    return HTMLResponse("<h1>Welcome to Vertical Studies</h1>")
+
 # Include router
 app.include_router(api_router)
 
