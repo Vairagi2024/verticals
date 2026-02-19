@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Upload Content - Vertical Studies</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #F8F9FB; }
+        .header { background: #4A90E2; color: white; padding: 20px; }
+        .back-btn { background: rgba(255,255,255,0.3); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; }
+        .container { max-width: 600px; margin: 30px auto; padding: 20px; }
+        .card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        h2 { margin-bottom: 20px; color: #333; }
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; }
+        .tab { padding: 12px 24px; cursor: pointer; border: none; background: #e0e0e0; border-radius: 8px; font-size: 14px; font-weight: 500; }
+        .tab.active { background: #4A90E2; color: white; }
+        .upload-section { display: none; }
+        .upload-section.active { display: block; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: 500; color: #333; }
+        input, select, textarea { width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 14px; }
+        input:focus, select:focus, textarea:focus { outline: none; border-color: #4A90E2; }
+        .btn { width: 100%; padding: 14px; background: #4A90E2; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; }
+        .btn:hover { background: #3a7bc8; }
+        .success { color: #4caf50; padding: 12px; background: #e8f5e9; border-radius: 8px; margin-bottom: 20px; display: none; }
+        .error { color: #d32f2f; padding: 12px; background: #ffebee; border-radius: 8px; margin-bottom: 20px; display: none; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <button class="back-btn" onclick="history.back()">← Back</button>
+        <h1 style="margin-top: 10px;">Upload Content</h1>
+    </div>
+    
+    <div class="container">
+        <div class="card">
+            <div class="tabs">
+                <button class="tab active" onclick="showSection('video')">Video</button>
+                <button class="tab" onclick="showSection('pdf')">PDF/Document</button>
+                <button class="tab" onclick="showSection('test')">Create Test</button>
+            </div>
+            
+            <div id="success" class="success"></div>
+            <div id="error" class="error"></div>
+            
+            <!-- Video Upload -->
+            <div id="video" class="upload-section active">
+                <h2>Upload Video</h2>
+                <form id="videoForm">
+                    <div class="form-group">
+                        <label>Chapter</label>
+                        <select id="videoChapter" required>
+                            <option value="ch1">Chapter 1: Motion in Straight Line</option>
+                            <option value="ch2">Chapter 2: Motion in Plane</option>
+                            <option value="ch3">Chapter 3: Laws of Motion</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Video Title</label>
+                        <input type="text" id="videoTitle" placeholder="e.g., Introduction to Velocity" required>
+                    </div>
+                    <div class="form-group">
+                        <label>YouTube Video URL</label>
+                        <input type="url" id="videoUrl" placeholder="https://youtube.com/watch?v=..." required>
+                    </div>
+                    <div class="form-group">
+                        <label>Description (Optional)</label>
+                        <textarea id="videoDesc" rows="3" placeholder="Brief description of the video..."></textarea>
+                    </div>
+                    <button type="submit" class="btn">Upload Video</button>
+                </form>
+            </div>
+            
+            <!-- PDF Upload -->
+            <div id="pdf" class="upload-section">
+                <h2>Upload PDF/Document</h2>
+                <form id="pdfForm">
+                    <div class="form-group">
+                        <label>Chapter</label>
+                        <select id="pdfChapter" required>
+                            <option value="ch1">Chapter 1: Motion in Straight Line</option>
+                            <option value="ch2">Chapter 2: Motion in Plane</option>
+                            <option value="ch3">Chapter 3: Laws of Motion</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Document Title</label>
+                        <input type="text" id="pdfTitle" placeholder="e.g., Chapter 1 Notes" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Upload PDF File</label>
+                        <input type="file" id="pdfFile" accept=".pdf" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Description (Optional)</label>
+                        <textarea id="pdfDesc" rows="3" placeholder="Brief description..."></textarea>
+                    </div>
+                    <button type="submit" class="btn">Upload PDF</button>
+                </form>
+            </div>
+            
+            <!-- Test Creation -->
+            <div id="test" class="upload-section">
+                <h2>Create Test</h2>
+                <form id="testForm">
+                    <div class="form-group">
+                        <label>Test Title</label>
+                        <input type="text" id="testTitle" placeholder="e.g., Chapter 1 Test" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Chapter</label>
+                        <select id="testChapter" required>
+                            <option value="ch1">Chapter 1: Motion in Straight Line</option>
+                            <option value="ch2">Chapter 2: Motion in Plane</option>
+                            <option value="ch3">Chapter 3: Laws of Motion</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Time Limit (Minutes)</label>
+                        <input type="number" id="testTime" value="30" min="5" max="180" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Number of Questions</label>
+                        <input type="number" id="testQuestions" value="20" min="5" max="50" required>
+                    </div>
+                    <button type="submit" class="btn">Create Test (Manual Entry)</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function showSection(section) {
+            document.querySelectorAll('.upload-section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.getElementById(section).classList.add('active');
+            event.target.classList.add('active');
+        }
+        
+        // Video Form
+        document.getElementById('videoForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            showMessage('Uploading video...', 'success');
+            setTimeout(() => {
+                showMessage('Video uploaded successfully! ✓', 'success');
+                e.target.reset();
+            }, 1500);
+        });
+        
+        // PDF Form
+        document.getElementById('pdfForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            showMessage('Uploading PDF...', 'success');
+            setTimeout(() => {
+                showMessage('PDF uploaded successfully! ✓', 'success');
+                e.target.reset();
+            }, 1500);
+        });
+        
+        // Test Form
+        document.getElementById('testForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            showMessage('Creating test...', 'success');
+            setTimeout(() => {
+                showMessage('Test created successfully! ✓', 'success');
+                e.target.reset();
+            }, 1500);
+        });
+        
+        function showMessage(msg, type) {
+            const successDiv = document.getElementById('success');
+            const errorDiv = document.getElementById('error');
+            
+            if (type === 'success') {
+                successDiv.textContent = msg;
+                successDiv.style.display = 'block';
+                errorDiv.style.display = 'none';
+            } else {
+                errorDiv.textContent = msg;
+                errorDiv.style.display = 'block';
+                successDiv.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>

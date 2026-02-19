@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test - Vertical Studies</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #F8F9FB; }
+        .timer-bar { background: #d32f2f; color: white; padding: 15px; text-align: center; font-size: 24px; font-weight: bold; position: sticky; top: 0; z-index: 100; }
+        .container { max-width: 800px; margin: 20px auto; padding: 20px; }
+        .question-card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .question-number { color: #6C3AE0; font-weight: bold; margin-bottom: 10px; }
+        .question-text { font-size: 18px; margin-bottom: 20px; line-height: 1.6; }
+        .option { padding: 15px; border: 2px solid #e0e0e0; border-radius: 8px; margin-bottom: 12px; cursor: pointer; transition: all 0.2s; }
+        .option:hover { border-color: #6C3AE0; background: #f5f3ff; }
+        .option.selected { border-color: #6C3AE0; background: #ede7f6; }
+        .submit-btn { width: 100%; padding: 16px; background: #4caf50; color: white; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; position: sticky; bottom: 20px; }
+        .submit-btn:hover { background: #45a049; }
+        .result-modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); align-items: center; justify-content: center; z-index: 200; }
+        .result-modal.show { display: flex; }
+        .result-content { background: white; padding: 40px; border-radius: 16px; text-align: center; max-width: 400px; }
+        .result-score { font-size: 48px; font-weight: bold; color: #4caf50; margin: 20px 0; }
+        .result-message { font-size: 20px; color: #666; margin-bottom: 30px; }
+    </style>
+</head>
+<body>
+    <div class="timer-bar" id="timer">⏱️ Time Left: 30:00</div>
+    
+    <div class="container">
+        <h2 style="margin-bottom: 20px; text-align: center;">📝 Chapter 1 Test - Motion in Straight Line</h2>
+        
+        <!-- Question 1 -->
+        <div class="question-card">
+            <div class="question-number">Question 1 of 5</div>
+            <div class="question-text">What is the SI unit of velocity?</div>
+            <div class="option" onclick="selectOption(1, 0)">A. m/s²</div>
+            <div class="option" onclick="selectOption(1, 1)">B. m/s</div>
+            <div class="option" onclick="selectOption(1, 2)">C. km/h</div>
+            <div class="option" onclick="selectOption(1, 3)">D. m</div>
+        </div>
+        
+        <!-- Question 2 -->
+        <div class="question-card">
+            <div class="question-number">Question 2 of 5</div>
+            <div class="question-text">Acceleration is defined as:</div>
+            <div class="option" onclick="selectOption(2, 0)">A. Rate of change of velocity</div>
+            <div class="option" onclick="selectOption(2, 1)">B. Rate of change of distance</div>
+            <div class="option" onclick="selectOption(2, 2)">C. Rate of change of speed</div>
+            <div class="option" onclick="selectOption(2, 3)">D. Rate of change of force</div>
+        </div>
+        
+        <!-- Question 3 -->
+        <div class="question-card">
+            <div class="question-number">Question 3 of 5</div>
+            <div class="question-text">A body is moving with uniform velocity. Its acceleration is:</div>
+            <div class="option" onclick="selectOption(3, 0)">A. Zero</div>
+            <div class="option" onclick="selectOption(3, 1)">B. Positive</div>
+            <div class="option" onclick="selectOption(3, 2)">C. Negative</div>
+            <div class="option" onclick="selectOption(3, 3)">D. Cannot be determined</div>
+        </div>
+        
+        <!-- Question 4 -->
+        <div class="question-card">
+            <div class="question-number">Question 4 of 5</div>
+            <div class="question-text">Distance is a:</div>
+            <div class="option" onclick="selectOption(4, 0)">A. Vector quantity</div>
+            <div class="option" onclick="selectOption(4, 1)">B. Scalar quantity</div>
+            <div class="option" onclick="selectOption(4, 2)">C. Both scalar and vector</div>
+            <div class="option" onclick="selectOption(4, 3)">D. Neither scalar nor vector</div>
+        </div>
+        
+        <!-- Question 5 -->
+        <div class="question-card">
+            <div class="question-number">Question 5 of 5</div>
+            <div class="question-text">Which equation represents uniform acceleration?</div>
+            <div class="option" onclick="selectOption(5, 0)">A. v = u + at</div>
+            <div class="option" onclick="selectOption(5, 1)">B. F = ma</div>
+            <div class="option" onclick="selectOption(5, 2)">C. E = mc²</div>
+            <div class="option" onclick="selectOption(5, 3)">D. P = F/A</div>
+        </div>
+        
+        <button class="submit-btn" onclick="submitTest()">Submit Test</button>
+    </div>
+    
+    <!-- Result Modal -->
+    <div class="result-modal" id="resultModal">
+        <div class="result-content">
+            <div style="font-size: 60px;">🎉</div>
+            <div class="result-score" id="resultScore">4/5</div>
+            <div class="result-message">Great Job! You scored 80%</div>
+            <button class="submit-btn" onclick="window.location.href='/dashboard.html'">Back to Dashboard</button>
+        </div>
+    </div>
+    
+    <script>
+        let answers = {};
+        let timeLeft = 1800; // 30 minutes in seconds
+        const correctAnswers = {1: 1, 2: 0, 3: 0, 4: 1, 5: 0}; // Correct answer indices
+        
+        // Timer
+        const timerInterval = setInterval(() => {
+            timeLeft--;
+            const mins = Math.floor(timeLeft / 60);
+            const secs = timeLeft % 60;
+            document.getElementById('timer').textContent = 
+                `⏱️ Time Left: ${mins}:${secs.toString().padStart(2, '0')}`;
+            
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                submitTest();
+            }
+        }, 1000);
+        
+        function selectOption(question, option) {
+            // Remove previous selection
+            const card = event.target.closest('.question-card');
+            card.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+            
+            // Mark new selection
+            event.target.classList.add('selected');
+            answers[question] = option;
+        }
+        
+        function submitTest() {
+            clearInterval(timerInterval);
+            
+            // Calculate score
+            let score = 0;
+            for (let q in correctAnswers) {
+                if (answers[q] === correctAnswers[q]) {
+                    score++;
+                }
+            }
+            
+            const percentage = Math.round((score / 5) * 100);
+            document.getElementById('resultScore').textContent = `${score}/5`;
+            document.querySelector('.result-message').textContent = 
+                percentage >= 70 ? `Great Job! You scored ${percentage}%` : `Keep practicing! You scored ${percentage}%`;
+            
+            document.getElementById('resultModal').classList.add('show');
+        }
+    </script>
+</body>
+</html>

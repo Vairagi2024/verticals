@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Physics - Vertical Studies</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #F8F9FB; }
+        .header { background: #FF6B6B; color: white; padding: 20px; }
+        .header h1 { font-size: 28px; }
+        .header p { opacity: 0.9; margin-top: 5px; }
+        .back-btn { background: rgba(255,255,255,0.3); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; }
+        .container { max-width: 800px; margin: 20px auto; padding: 20px; }
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid #e0e0e0; }
+        .tab { padding: 12px 24px; cursor: pointer; border: none; background: none; font-size: 16px; font-weight: 500; color: #666; }
+        .tab.active { color: #FF6B6B; border-bottom: 3px solid #FF6B6B; }
+        .section { display: none; }
+        .section.active { display: block; }
+        .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 16px; }
+        .chapter-card { display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+        .chapter-card:hover { background: #f5f5f5; }
+        .chapter-title { font-size: 18px; font-weight: 600; }
+        .chapter-meta { color: #666; font-size: 14px; margin-top: 4px; }
+        .btn { padding: 10px 20px; background: #FF6B6B; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; }
+        .btn:hover { background: #e55a5a; }
+        .btn-secondary { background: #e0e0e0; color: #333; }
+        .empty { text-align: center; padding: 40px; color: #999; }
+        .upload-section { margin-top: 20px; }
+        .form-group { margin-bottom: 16px; }
+        label { display: block; margin-bottom: 8px; font-weight: 500; }
+        input, select, textarea { width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 6px; font-size: 14px; }
+        .fab { position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; background: #FF6B6B; border-radius: 50%; border: none; color: white; font-size: 28px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <button class="back-btn" onclick="window.location.href='/dashboard.html'">← Back</button>
+        <h1>⚛️ Physics</h1>
+        <p>by Jatin Goyal</p>
+    </div>
+    
+    <div class="container">
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('chapters')">Chapters</button>
+            <button class="tab" onclick="showTab('videos')">Videos</button>
+            <button class="tab" onclick="showTab('tests')">Tests</button>
+        </div>
+        
+        <!-- Chapters Section -->
+        <div id="chapters" class="section active">
+            <div class="card chapter-card" onclick="window.location.href='/chapter.html?id=ch1'">
+                <div>
+                    <div class="chapter-title">Chapter 1: Motion in a Straight Line</div>
+                    <div class="chapter-meta">8 topics • 12 videos</div>
+                </div>
+                <span style="font-size: 20px;">→</span>
+            </div>
+            <div class="card chapter-card" onclick="window.location.href='/chapter.html?id=ch2'">
+                <div>
+                    <div class="chapter-title">Chapter 2: Motion in a Plane</div>
+                    <div class="chapter-meta">6 topics • 10 videos</div>
+                </div>
+                <span style="font-size: 20px;">→</span>
+            </div>
+            <div class="card chapter-card" onclick="window.location.href='/chapter.html?id=ch3'">
+                <div>
+                    <div class="chapter-title">Chapter 3: Laws of Motion</div>
+                    <div class="chapter-meta">10 topics • 15 videos</div>
+                </div>
+                <span style="font-size: 20px;">→</span>
+            </div>
+        </div>
+        
+        <!-- Videos Section -->
+        <div id="videos" class="section">
+            <div class="card">
+                <div class="chapter-title">📹 Recent Videos</div>
+                <div class="chapter-meta" style="margin-top: 10px;">Introduction to Kinematics - 45 mins</div>
+            </div>
+            <div class="card">
+                <div class="chapter-title">📹 Newton's First Law</div>
+                <div class="chapter-meta" style="margin-top: 10px;">Concept & Examples - 38 mins</div>
+            </div>
+        </div>
+        
+        <!-- Tests Section -->
+        <div id="tests" class="section">
+            <div class="card" onclick="window.location.href='/test-attempt.html?id=test1'" style="cursor: pointer;">
+                <div class="chapter-title">📝 Chapter 1 Test</div>
+                <div class="chapter-meta" style="margin-top: 10px;">20 Questions • 30 Minutes • MCQ</div>
+                <button class="btn" style="margin-top: 12px;">Start Test</button>
+            </div>
+            <div class="card" onclick="window.location.href='/test-attempt.html?id=test2'" style="cursor: pointer;">
+                <div class="chapter-title">📝 Motion Full Test</div>
+                <div class="chapter-meta" style="margin-top: 10px;">25 Questions • 40 Minutes • MCQ</div>
+                <button class="btn" style="margin-top: 12px;">Start Test</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Teacher Only: Upload Button -->
+    <button class="fab" onclick="showUploadOptions()" id="uploadBtn" style="display: none;">+</button>
+    
+    <script>
+        // Check if user is teacher
+        const user = JSON.parse(localStorage.getItem('user') || 'null');
+        if (user && (user.role === 'teacher' || user.role === 'admin')) {
+            document.getElementById('uploadBtn').style.display = 'block';
+        }
+        
+        function showTab(tabName) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            
+            // Show selected section
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+        
+        function showUploadOptions() {
+            window.location.href = '/upload-content.html?subject=physics';
+        }
+    </script>
+</body>
+</html>
