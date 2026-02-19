@@ -73,6 +73,11 @@
         } else {
             document.getElementById('welcome').textContent = `Welcome, ${user.name}!`;
             document.getElementById('role').textContent = user.role.toUpperCase();
+            
+            // Show admin panel if user is admin
+            if (user.role === 'admin') {
+                document.getElementById('adminPanel').style.display = 'block';
+            }
         }
         
         function logout() {
