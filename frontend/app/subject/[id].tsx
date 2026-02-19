@@ -50,6 +50,13 @@ export default function SubjectDetail() {
   const [showMenu, setShowMenu] = useState(false);
   const { user } = useAuthStore();
   const router = useRouter();
+  
+  // Modal state for cross-platform prompt
+  const [promptModal, setPromptModal] = useState(false);
+  const [promptTitle, setPromptTitle] = useState('');
+  const [promptMessage, setPromptMessage] = useState('');
+  const [promptValue, setPromptValue] = useState('');
+  const [promptCallback, setPromptCallback] = useState<((value: string | undefined) => void) | null>(null);
 
   const isTeacher = user?.role === 'teacher' || user?.role === 'admin';
 
