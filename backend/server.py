@@ -943,3 +943,20 @@ logger = logging.getLogger(__name__)
 @app.on_event("shutdown")
 async def shutdown_db_client():
     client.close()
+
+# ===== STATIC FILE SERVING =====
+# Serve HTML pages from frontend/public directory
+
+@app.get("/")
+async def serve_index():
+    file_path = FRONTEND_DIR / "index.html"
+    if file_path.exists():
+        return FileResponse(file_path, media_type="text/html")
+    return HTMLResponse("<h1>Welcome to Vertical Studies</h1>")
+
+@app.get("/{filename}.html")
+async def serve_html(filename: str):
+    file_path = FRONTEND_DIR / f"{filename}.html"
+    if file_path.exists():
+        return FileResponse(file_path, media_type="text/html")
+    raise HTTPException(status_code=404, detail="Page not found")
