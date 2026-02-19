@@ -1,10 +1,15 @@
 import React from 'react';
-import { View, StyleSheet, TouchableOpacity, Pressable } from 'react-native';
-import { Text } from 'react-native-paper';
+import { View, StyleSheet } from 'react-native';
+import { Text, Button } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { router } from 'expo-router';
 
 export default function Index() {
+  const openLogin = (role: string) => {
+    if (typeof window !== 'undefined') {
+      window.location.href = `/login/${role}`;
+    }
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -15,49 +20,58 @@ export default function Index() {
           Sector 44 D, Chandigarh
         </Text>
         <Text variant="bodyLarge" style={styles.subtitle2}>
-          Select Your Role to Continue
+          Select Your Role to Login
         </Text>
       </View>
 
       <View style={styles.rolesContainer}>
-        <Pressable
-          style={[styles.roleCard, { backgroundColor: '#6C3AE0' }]}
-          onPress={() => router.push('/login/admin')}
-        >
+        <View style={[styles.roleCard, { backgroundColor: '#6C3AE0' }]}>
           <MaterialCommunityIcons name="shield-account" size={60} color="#fff" />
           <Text variant="headlineSmall" style={styles.roleText}>
             Admin
           </Text>
-          <Text variant="bodyMedium" style={styles.roleDesc}>
-            Institute Administrator
-          </Text>
-        </Pressable>
+          <Button
+            mode="contained"
+            onPress={() => openLogin('admin')}
+            buttonColor="#fff"
+            textColor="#6C3AE0"
+            style={styles.button}
+          >
+            Login as Admin
+          </Button>
+        </View>
 
-        <Pressable
-          style={[styles.roleCard, { backgroundColor: '#4A90E2' }]}
-          onPress={() => router.push('/login/teacher')}
-        >
+        <View style={[styles.roleCard, { backgroundColor: '#4A90E2' }]}>
           <MaterialCommunityIcons name="account-tie" size={60} color="#fff" />
           <Text variant="headlineSmall" style={styles.roleText}>
             Teacher
           </Text>
-          <Text variant="bodyMedium" style={styles.roleDesc}>
-            Upload Content & Create Tests
-          </Text>
-        </Pressable>
+          <Button
+            mode="contained"
+            onPress={() => openLogin('teacher')}
+            buttonColor="#fff"
+            textColor="#4A90E2"
+            style={styles.button}
+          >
+            Login as Teacher
+          </Button>
+        </View>
 
-        <Pressable
-          style={[styles.roleCard, { backgroundColor: '#4ECDC4' }]}
-          onPress={() => router.push('/login/student')}
-        >
+        <View style={[styles.roleCard, { backgroundColor: '#4ECDC4' }]}>
           <MaterialCommunityIcons name="school" size={60} color="#fff" />
           <Text variant="headlineSmall" style={styles.roleText}>
             Student
           </Text>
-          <Text variant="bodyMedium" style={styles.roleDesc}>
-            Access Lectures & Tests
-          </Text>
-        </Pressable>
+          <Button
+            mode="contained"
+            onPress={() => openLogin('student')}
+            buttonColor="#fff"
+            textColor="#4ECDC4"
+            style={styles.button}
+          >
+            Login as Student
+          </Button>
+        </View>
       </View>
     </View>
   );
