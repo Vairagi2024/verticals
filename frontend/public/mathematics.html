@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mathematics - Vertical Studies</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #F8F9FB; }
+        .header { background: #95E1D3; color: white; padding: 20px; }
+        .header h1 { font-size: 28px; }
+        .header p { opacity: 0.9; margin-top: 5px; }
+        .back-btn { background: rgba(255,255,255,0.3); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; }
+        .container { max-width: 800px; margin: 20px auto; padding: 20px; }
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid #e0e0e0; }
+        .tab { padding: 12px 24px; cursor: pointer; border: none; background: none; font-size: 16px; font-weight: 500; color: #666; }
+        .tab.active { color: #95E1D3; border-bottom: 3px solid #95E1D3; }
+        .section { display: none; }
+        .section.active { display: block; }
+        .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 16px; }
+        .chapter-card { display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+        .chapter-card:hover { background: #f5f5f5; }
+        .chapter-title { font-size: 18px; font-weight: 600; }
+        .chapter-meta { color: #666; font-size: 14px; margin-top: 4px; }
+        .btn { padding: 10px 20px; background: #95E1D3; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; }
+        .btn:hover { background: #7ed1c1; }
+        .fab { position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; background: #95E1D3; border-radius: 50%; border: none; color: white; font-size: 28px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <button class="back-btn" onclick="window.location.href='/dashboard.html'">← Back</button>
+        <h1>📐 Mathematics</h1>
+        <p>by Binay Singh</p>
+    </div>
+    
+    <div class="container">
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('chapters')">Chapters</button>
+            <button class="tab" onclick="showTab('videos')">Videos</button>
+            <button class="tab" onclick="showTab('tests')">Tests</button>
+        </div>
+        
+        <div id="chapters" class="section active">
+            <div class="card chapter-card">
+                <div>
+                    <div class="chapter-title">Chapter 1: Sets and Functions</div>
+                    <div class="chapter-meta">9 topics • 15 videos</div>
+                </div>
+                <span style="font-size: 20px;">→</span>
+            </div>
+            <div class="card chapter-card">
+                <div>
+                    <div class="chapter-title">Chapter 2: Algebra</div>
+                    <div class="chapter-meta">12 topics • 18 videos</div>
+                </div>
+                <span style="font-size: 20px;">→</span>
+            </div>
+            <div class="card chapter-card">
+                <div>
+                    <div class="chapter-title">Chapter 3: Trigonometry</div>
+                    <div class="chapter-meta">10 topics • 16 videos</div>
+                </div>
+                <span style="font-size: 20px;">→</span>
+            </div>
+        </div>
+        
+        <div id="videos" class="section">
+            <div class="card">
+                <div class="chapter-title">📹 Sets Theory Introduction</div>
+                <div class="chapter-meta" style="margin-top: 10px;">Complete basics - 40 mins</div>
+            </div>
+            <div class="card">
+                <div class="chapter-title">📹 Trigonometric Identities</div>
+                <div class="chapter-meta" style="margin-top: 10px;">Important formulas - 45 mins</div>
+            </div>
+        </div>
+        
+        <div id="tests" class="section">
+            <div class="card" onclick="window.location.href='/test-attempt.html?id=math1'" style="cursor: pointer;">
+                <div class="chapter-title">📝 Sets Test</div>
+                <div class="chapter-meta" style="margin-top: 10px;">25 Questions • 40 Minutes • MCQ</div>
+                <button class="btn" style="margin-top: 12px;">Start Test</button>
+            </div>
+        </div>
+    </div>
+    
+    <button class="fab" onclick="window.location.href='/upload-content.html?subject=mathematics'" id="uploadBtn" style="display: none;">+</button>
+    
+    <script>
+        const user = JSON.parse(localStorage.getItem('user') || 'null');
+        if (user && (user.role === 'teacher' || user.role === 'admin')) {
+            document.getElementById('uploadBtn').style.display = 'block';
+        }
+        
+        function showTab(tabName) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>
