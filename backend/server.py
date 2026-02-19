@@ -44,12 +44,19 @@ class User(BaseModel):
     created_at: datetime
 
 class StudentLoginRequest(BaseModel):
-    mobile: str
+    email: str
+    password: str
     batch_code: str
 
 class TeacherLoginRequest(BaseModel):
     email: str
     password: str
+
+class StudentRegisterRequest(BaseModel):
+    name: str
+    email: str
+    password: str
+    batch_code: str
 
 class Batch(BaseModel):
     batch_id: str
