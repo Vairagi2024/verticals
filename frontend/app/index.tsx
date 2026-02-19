@@ -1,8 +1,8 @@
 import React from 'react';
-import { View, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Pressable } from 'react-native';
 import { Text } from 'react-native-paper';
-import { Link } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { router } from 'expo-router';
 
 export default function Index() {
   return (
@@ -20,41 +20,44 @@ export default function Index() {
       </View>
 
       <View style={styles.rolesContainer}>
-        <Link href="/login/admin" asChild>
-          <TouchableOpacity style={[styles.roleCard, { backgroundColor: '#6C3AE0' }]}>
-            <MaterialCommunityIcons name="shield-account" size={60} color="#fff" />
-            <Text variant="headlineSmall" style={styles.roleText}>
-              Admin
-            </Text>
-            <Text variant="bodyMedium" style={styles.roleDesc}>
-              Institute Administrator
-            </Text>
-          </TouchableOpacity>
-        </Link>
+        <Pressable
+          style={[styles.roleCard, { backgroundColor: '#6C3AE0' }]}
+          onPress={() => router.push('/login/admin')}
+        >
+          <MaterialCommunityIcons name="shield-account" size={60} color="#fff" />
+          <Text variant="headlineSmall" style={styles.roleText}>
+            Admin
+          </Text>
+          <Text variant="bodyMedium" style={styles.roleDesc}>
+            Institute Administrator
+          </Text>
+        </Pressable>
 
-        <Link href="/login/teacher" asChild>
-          <TouchableOpacity style={[styles.roleCard, { backgroundColor: '#4A90E2' }]}>
-            <MaterialCommunityIcons name="account-tie" size={60} color="#fff" />
-            <Text variant="headlineSmall" style={styles.roleText}>
-              Teacher
-            </Text>
-            <Text variant="bodyMedium" style={styles.roleDesc}>
-              Upload Content & Create Tests
-            </Text>
-          </TouchableOpacity>
-        </Link>
+        <Pressable
+          style={[styles.roleCard, { backgroundColor: '#4A90E2' }]}
+          onPress={() => router.push('/login/teacher')}
+        >
+          <MaterialCommunityIcons name="account-tie" size={60} color="#fff" />
+          <Text variant="headlineSmall" style={styles.roleText}>
+            Teacher
+          </Text>
+          <Text variant="bodyMedium" style={styles.roleDesc}>
+            Upload Content & Create Tests
+          </Text>
+        </Pressable>
 
-        <Link href="/login/student" asChild>
-          <TouchableOpacity style={[styles.roleCard, { backgroundColor: '#4ECDC4' }]}>
-            <MaterialCommunityIcons name="school" size={60} color="#fff" />
-            <Text variant="headlineSmall" style={styles.roleText}>
-              Student
-            </Text>
-            <Text variant="bodyMedium" style={styles.roleDesc}>
-              Access Lectures & Tests
-            </Text>
-          </TouchableOpacity>
-        </Link>
+        <Pressable
+          style={[styles.roleCard, { backgroundColor: '#4ECDC4' }]}
+          onPress={() => router.push('/login/student')}
+        >
+          <MaterialCommunityIcons name="school" size={60} color="#fff" />
+          <Text variant="headlineSmall" style={styles.roleText}>
+            Student
+          </Text>
+          <Text variant="bodyMedium" style={styles.roleDesc}>
+            Access Lectures & Tests
+          </Text>
+        </Pressable>
       </View>
     </View>
   );
