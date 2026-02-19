@@ -945,18 +945,20 @@ async def shutdown_db_client():
     client.close()
 
 # ===== STATIC FILE SERVING =====
-# Serve HTML pages from frontend/public directory
+# Serve HTML pages from frontend/public directory under /api/ prefix
 
-@app.get("/")
-async def serve_index():
-    file_path = FRONTEND_DIR / "index.html"
-    if file_path.exists():
-        return FileResponse(file_path, media_type="text/html")
-    return HTMLResponse("<h1>Welcome to Vertical Studies</h1>")
-
-@app.get("/{filename}.html")
-async def serve_html(filename: str):
+@api_router.get("/page/{filename}")
+async def serve_page(filename: str):
+    """Serve HTML pages - access via /api/page/index, /api/page/dashboard etc"""
     file_path = FRONTEND_DIR / f"{filename}.html"
     if file_path.exists():
         return FileResponse(file_path, media_type="text/html")
     raise HTTPException(status_code=404, detail="Page not found")
+
+@api_router.get("/home")
+async def serve_home():
+    """Serve home page - access via /api/home"""
+    file_path = FRONTEND_DIR / "index.html"
+    if file_path.exists():
+        return FileResponse(file_path, media_type="text/html")
+    return HTMLResponse("<h1>Welcome to Vertical Studies</h1>")
