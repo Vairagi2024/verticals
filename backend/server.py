@@ -309,6 +309,451 @@ async def logout(request: Request):
         await db.user_sessions.delete_one({"session_token": session_token})
     return {"message": "Logged out"}
 
+# ===== ADMIN ENDPOINTS =====
+
+@api_router.post("/admin/batch/create")
+async def create_batch(
+    batch_code: str = Form(...),
+    batch_name: str = Form(...),
+    year: int = Form(...),
+    user: User = Depends(require_admin)
+):
+    # Check if batch code exists
+    existing = await db.batches.find_one({"batch_code": batch_code})
+    if existing:
+        raise HTTPException(status_code=400, detail="Batch code already exists")
+    
+    batch_id = f"batch_{uuid.uuid4().hex[:12]}"
+    batch_doc = {
+        "batch_id": batch_id,
+        "batch_code": batch_code,
+        "batch_name": batch_name,
+        "year": year,
+        "active": True,
+        "created_by": user.user_id,
+        "created_at": datetime.now(timezone.utc)
+    }
+    await db.batches.insert_one(batch_doc)
+    return {"message": "Batch created", "batch_id": batch_id}
+
+@api_router.get("/admin/batches")
+async def get_batches(user: User = Depends(require_admin)):
+    batches = await db.batches.find({}, {"_id": 0}).to_list(1000)
+    return batches
+
+@api_router.post("/admin/teacher/add")
+async def add_teacher(
+    name: str = Form(...),
+    email: str = Form(...),
+    password: str = Form(...),
+    subject_id: Optional[str] = Form(None),
+    user: User = Depends(require_admin)
+):
+    # Check if email exists
+    existing = await db.users.find_one({"email": email})
+    if existing:
+        raise HTTPException(status_code=400, detail="Email already exists")
+    
+    password_hash = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
+    teacher_id = f"teacher_{uuid.uuid4().hex[:12]}"
+    
+    teacher_doc = {
+        "user_id": teacher_id,
+        "email": email,
+        "name": name,
+        "password_hash": password_hash,
+        "role": "teacher",
+        "created_at": datetime.now(timezone.utc)
+    }
+    await db.users.insert_one(teacher_doc)
+    
+    # Update subject if provided
+    if subject_id:
+        await db.subjects.update_one(
+            {"subject_id": subject_id},
+            {"$set": {"teacher_id": teacher_id}}
+        )
+    
+    return {"message": "Teacher added", "teacher_id": teacher_id}
+
+@api_router.post("/admin/student/add")
+async def add_student(
+    name: str = Form(...),
+    mobile: str = Form(...),
+    batch_code: str = Form(...),
+    user: User = Depends(require_admin)
+):
+    # Check if mobile exists in this batch
+    existing = await db.users.find_one({"mobile": mobile, "batch_code": batch_code})
+    if existing:
+        raise HTTPException(status_code=400, detail="Student already exists in this batch")
+    
+    # Verify batch exists
+    batch = await db.batches.find_one({"batch_code": batch_code})
+    if not batch:
+        raise HTTPException(status_code=400, detail="Invalid batch code")
+    
+    student_id = f"student_{uuid.uuid4().hex[:12]}"
+    student_doc = {
+        "user_id": student_id,
+        "mobile": mobile,
+        "name": name,
+        "role": "student",
+        "batch_code": batch_code,
+        "created_at": datetime.now(timezone.utc)
+    }
+    await db.users.insert_one(student_doc)
+    
+    return {"message": "Student added", "student_id": student_id}
+
+@api_router.get("/admin/teachers")
+async def get_teachers(user: User = Depends(require_admin)):
+    teachers = await db.users.find({"role": "teacher"}, {"_id": 0, "password_hash": 0}).to_list(1000)
+    return teachers
+
+@api_router.get("/admin/students")
+async def get_students(batch_code: Optional[str] = None, user: User = Depends(require_admin)):
+    query = {"role": "student"}
+    if batch_code:
+        query["batch_code"] = batch_code
+    students = await db.users.find(query, {"_id": 0}).to_list(1000)
+    return students
+
+@api_router.get("/admin/analytics")
+async def get_admin_analytics(user: User = Depends(require_admin)):
+    total_students = await db.users.count_documents({"role": "student"})
+    total_teachers = await db.users.count_documents({"role": "teacher"})
+    total_batches = await db.batches.count_documents({})
+    total_tests = await db.tests.count_documents({})
+    total_videos = await db.videos.count_documents({})
+    
+    return {
+        "total_students": total_students,
+        "total_teachers": total_teachers,
+        "total_batches": total_batches,
+        "total_tests": total_tests,
+        "total_videos": total_videos
+    }
+
+# ===== CONTENT MANAGEMENT =====
+
+@api_router.get("/content/subjects")
+async def get_subjects(user: User = Depends(require_auth)):
+    subjects = await db.subjects.find({}, {"_id": 0}).to_list(100)
+    return subjects
+
+@api_router.post("/content/chapter/create")
+async def create_chapter(
+    subject_id: str = Form(...),
+    chapter_name: str = Form(...),
+    chapter_number: int = Form(...),
+    description: Optional[str] = Form(None),
+    user: User = Depends(require_teacher_or_admin)
+):
+    chapter_id = f"chapter_{uuid.uuid4().hex[:12]}"
+    chapter_doc = {
+        "chapter_id": chapter_id,
+        "subject_id": subject_id,
+        "chapter_name": chapter_name,
+        "chapter_number": chapter_number,
+        "description": description
+    }
+    await db.chapters.insert_one(chapter_doc)
+    return {"message": "Chapter created", "chapter_id": chapter_id}
+
+@api_router.get("/content/chapters/{subject_id}")
+async def get_chapters(subject_id: str, user: User = Depends(require_auth)):
+    chapters = await db.chapters.find(
+        {"subject_id": subject_id},
+        {"_id": 0}
+    ).sort("chapter_number", 1).to_list(1000)
+    return chapters
+
+@api_router.post("/content/topic/create")
+async def create_topic(
+    chapter_id: str = Form(...),
+    topic_name: str = Form(...),
+    topic_number: int = Form(...),
+    description: Optional[str] = Form(None),
+    user: User = Depends(require_teacher_or_admin)
+):
+    topic_id = f"topic_{uuid.uuid4().hex[:12]}"
+    topic_doc = {
+        "topic_id": topic_id,
+        "chapter_id": chapter_id,
+        "topic_name": topic_name,
+        "topic_number": topic_number,
+        "description": description
+    }
+    await db.topics.insert_one(topic_doc)
+    return {"message": "Topic created", "topic_id": topic_id}
+
+@api_router.get("/content/topics/{chapter_id}")
+async def get_topics(chapter_id: str, user: User = Depends(require_auth)):
+    topics = await db.topics.find(
+        {"chapter_id": chapter_id},
+        {"_id": 0}
+    ).sort("topic_number", 1).to_list(1000)
+    return topics
+
+@api_router.post("/content/video/upload")
+async def upload_video(
+    topic_id: str = Form(...),
+    title: str = Form(...),
+    description: Optional[str] = Form(None),
+    video_type: str = Form(...),
+    video_url: Optional[str] = Form(None),
+    duration: Optional[int] = Form(None),
+    file: Optional[UploadFile] = File(None),
+    user: User = Depends(require_teacher_or_admin)
+):
+    video_id = f"video_{uuid.uuid4().hex[:12]}"
+    video_data = None
+    
+    if video_type == "upload" and file:
+        content = await file.read()
+        video_data = base64.b64encode(content).decode()
+    
+    video_doc = {
+        "video_id": video_id,
+        "topic_id": topic_id,
+        "title": title,
+        "description": description,
+        "video_type": video_type,
+        "video_url": video_url,
+        "video_data": video_data,
+        "duration": duration,
+        "uploaded_by": user.user_id,
+        "created_at": datetime.now(timezone.utc)
+    }
+    await db.videos.insert_one(video_doc)
+    return {"message": "Video uploaded", "video_id": video_id}
+
+@api_router.get("/content/videos/{topic_id}")
+async def get_videos(topic_id: str, user: User = Depends(require_auth)):
+    videos = await db.videos.find(
+        {"topic_id": topic_id},
+        {"_id": 0, "video_data": 0}
+    ).to_list(1000)
+    return videos
+
+@api_router.get("/content/video/{video_id}")
+async def get_video_detail(video_id: str, user: User = Depends(require_auth)):
+    video = await db.videos.find_one({"video_id": video_id}, {"_id": 0})
+    if not video:
+        raise HTTPException(status_code=404, detail="Video not found")
+    return video
+
+@api_router.post("/content/pdf/upload")
+async def upload_pdf(
+    topic_id: str = Form(...),
+    title: str = Form(...),
+    description: Optional[str] = Form(None),
+    file: UploadFile = File(...),
+    user: User = Depends(require_teacher_or_admin)
+):
+    pdf_id = f"pdf_{uuid.uuid4().hex[:12]}"
+    content = await file.read()
+    pdf_data = base64.b64encode(content).decode()
+    
+    pdf_doc = {
+        "pdf_id": pdf_id,
+        "topic_id": topic_id,
+        "title": title,
+        "description": description,
+        "pdf_data": pdf_data,
+        "uploaded_by": user.user_id,
+        "created_at": datetime.now(timezone.utc)
+    }
+    await db.pdfs.insert_one(pdf_doc)
+    return {"message": "PDF uploaded", "pdf_id": pdf_id}
+
+@api_router.get("/content/pdfs/{topic_id}")
+async def get_pdfs(topic_id: str, user: User = Depends(require_auth)):
+    pdfs = await db.pdfs.find(
+        {"topic_id": topic_id},
+        {"_id": 0, "pdf_data": 0}
+    ).to_list(1000)
+    return pdfs
+
+@api_router.get("/content/pdf/{pdf_id}")
+async def get_pdf_detail(pdf_id: str, user: User = Depends(require_auth)):
+    pdf = await db.pdfs.find_one({"pdf_id": pdf_id}, {"_id": 0})
+    if not pdf:
+        raise HTTPException(status_code=404, detail="PDF not found")
+    return pdf
+
+# ===== TEST SYSTEM =====
+
+@api_router.post("/test/create")
+async def create_test(
+    test_type: str = Form(...),
+    title: str = Form(...),
+    description: Optional[str] = Form(None),
+    chapter_id: Optional[str] = Form(None),
+    subject_id: Optional[str] = Form(None),
+    duration_mins: int = Form(...),
+    total_marks: int = Form(...),
+    passing_marks: int = Form(...),
+    questions_json: str = Form(...),
+    user: User = Depends(require_teacher_or_admin)
+):
+    import json
+    questions_data = json.loads(questions_json)
+    
+    test_id = f"test_{uuid.uuid4().hex[:12]}"
+    test_doc = {
+        "test_id": test_id,
+        "chapter_id": chapter_id,
+        "subject_id": subject_id,
+        "test_type": test_type,
+        "title": title,
+        "description": description,
+        "duration_mins": duration_mins,
+        "total_marks": total_marks,
+        "passing_marks": passing_marks,
+        "created_by": user.user_id,
+        "created_at": datetime.now(timezone.utc)
+    }
+    await db.tests.insert_one(test_doc)
+    
+    # Insert questions
+    for q_data in questions_data:
+        question_id = f"question_{uuid.uuid4().hex[:12]}"
+        question_doc = {
+            "question_id": question_id,
+            "test_id": test_id,
+            "question_text": q_data["question_text"],
+            "option_a": q_data["option_a"],
+            "option_b": q_data["option_b"],
+            "option_c": q_data["option_c"],
+            "option_d": q_data["option_d"],
+            "correct_answer": q_data["correct_answer"],
+            "marks": q_data.get("marks", 4),
+            "solution_text": q_data.get("solution_text"),
+            "solution_image": q_data.get("solution_image")
+        }
+        await db.questions.insert_one(question_doc)
+    
+    return {"message": "Test created", "test_id": test_id}
+
+@api_router.get("/tests")
+async def get_tests(chapter_id: Optional[str] = None, subject_id: Optional[str] = None, user: User = Depends(require_auth)):
+    query = {}
+    if chapter_id:
+        query["chapter_id"] = chapter_id
+    if subject_id:
+        query["subject_id"] = subject_id
+    
+    tests = await db.tests.find(query, {"_id": 0}).sort("created_at", -1).to_list(1000)
+    return tests
+
+@api_router.get("/test/{test_id}")
+async def get_test(test_id: str, user: User = Depends(require_auth)):
+    test = await db.tests.find_one({"test_id": test_id}, {"_id": 0})
+    if not test:
+        raise HTTPException(status_code=404, detail="Test not found")
+    
+    questions = await db.questions.find(
+        {"test_id": test_id},
+        {"_id": 0, "correct_answer": 0, "solution_text": 0, "solution_image": 0}
+    ).to_list(1000)
+    
+    test["questions"] = questions
+    return test
+
+@api_router.post("/test/submit")
+async def submit_test(
+    test_id: str = Form(...),
+    answers_json: str = Form(...),
+    time_taken: int = Form(...),
+    user: User = Depends(require_auth)
+):
+    import json
+    answers = json.loads(answers_json)
+    
+    # Get all questions
+    questions = await db.questions.find({"test_id": test_id}, {"_id": 0}).to_list(1000)
+    
+    # Calculate score
+    score = 0
+    for q in questions:
+        q_id = q["question_id"]
+        if q_id in answers and answers[q_id] == q["correct_answer"]:
+            score += q["marks"]
+    
+    # Calculate rank
+    existing_attempts = await db.test_attempts.find({"test_id": test_id}).sort("score", -1).to_list(10000)
+    rank = 1
+    for attempt in existing_attempts:
+        if attempt["score"] > score:
+            rank += 1
+        elif attempt["score"] == score and attempt["time_taken"] < time_taken:
+            rank += 1
+    
+    # Save attempt
+    attempt_id = f"attempt_{uuid.uuid4().hex[:12]}"
+    attempt_doc = {
+        "attempt_id": attempt_id,
+        "test_id": test_id,
+        "student_id": user.user_id,
+        "answers": answers,
+        "score": score,
+        "rank": rank,
+        "time_taken": time_taken,
+        "completed_at": datetime.now(timezone.utc)
+    }
+    await db.test_attempts.insert_one(attempt_doc)
+    
+    # Update ranks for all attempts
+    all_attempts = await db.test_attempts.find({"test_id": test_id}).sort([("score", -1), ("time_taken", 1)]).to_list(10000)
+    for idx, att in enumerate(all_attempts):
+        await db.test_attempts.update_one(
+            {"attempt_id": att["attempt_id"]},
+            {"$set": {"rank": idx + 1}}
+        )
+    
+    return {
+        "message": "Test submitted",
+        "score": score,
+        "rank": rank,
+        "attempt_id": attempt_id
+    }
+
+@api_router.get("/test/leaderboard/{test_id}")
+async def get_leaderboard(test_id: str, user: User = Depends(require_auth)):
+    attempts = await db.test_attempts.find(
+        {"test_id": test_id},
+        {"_id": 0}
+    ).sort([("score", -1), ("time_taken", 1)]).to_list(100)
+    
+    # Enrich with student names
+    for attempt in attempts:
+        student = await db.users.find_one({"user_id": attempt["student_id"]}, {"_id": 0})
+        if student:
+            attempt["student_name"] = student["name"]
+    
+    return attempts
+
+@api_router.get("/student/results")
+async def get_student_results(user: User = Depends(require_auth)):
+    if user.role != "student":
+        raise HTTPException(status_code=403, detail="Student access only")
+    
+    attempts = await db.test_attempts.find(
+        {"student_id": user.user_id},
+        {"_id": 0}
+    ).sort("completed_at", -1).to_list(1000)
+    
+    # Enrich with test info
+    for attempt in attempts:
+        test = await db.tests.find_one({"test_id": attempt["test_id"]}, {"_id": 0})
+        if test:
+            attempt["test_title"] = test["title"]
+            attempt["total_marks"] = test["total_marks"]
+    
+    return attempts
+
 # Initialize default data
 @app.on_event("startup")
 async def startup_event():
