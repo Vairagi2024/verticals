@@ -1,81 +1,86 @@
 diff --git a/model.patch b/model.patch
-index 6f58a81..e69de29 100644
+index a2a080f..e69de29 100644
 --- a/model.patch
 +++ b/model.patch
-@@ -1,76 +0,0 @@
--diff --git a/frontend/public/dashboard.html b/frontend/public/dashboard.html
--index 2797a7d..28c847b 100644
----- a/frontend/public/dashboard.html
--+++ b/frontend/public/dashboard.html
--@@ -35,17 +35,17 @@
--         <div class="card">
--             <h3>Subjects</h3>
--             <div class="subjects">
---                <div class="subject-card">
--+                <div class="subject-card" onclick="window.location.href='/subject.html?id=physics'" style="cursor: pointer;">
--                     <div class="subject-icon">⚛️</div>
--                     <div><strong>Physics</strong></div>
--                     <div style="color: #666;">by Jatin Goyal</div>
--                 </div>
---                <div class="subject-card">
--+                <div class="subject-card" onclick="window.location.href='/subject.html?id=chemistry'" style="cursor: pointer;">
--                     <div class="subject-icon">🧪</div>
--                     <div><strong>Chemistry</strong></div>
--                     <div style="color: #666;">by Sandeep Vaishnava</div>
--                 </div>
---                <div class="subject-card">
--+                <div class="subject-card" onclick="window.location.href='/subject.html?id=mathematics'" style="cursor: pointer;">
--                     <div class="subject-icon">📐</div>
--                     <div><strong>Mathematics</strong></div>
--                     <div style="color: #666;">by Binay Singh</div>
+@@ -1,81 +0,0 @@
 -diff --git a/model.patch b/model.patch
--index e9a601b..e69de29 100644
+-index 6f58a81..e69de29 100644
 ---- a/model.patch
 -+++ b/model.patch
--@@ -1,46 +0,0 @@
+-@@ -1,76 +0,0 @@
+--diff --git a/frontend/public/dashboard.html b/frontend/public/dashboard.html
+--index 2797a7d..28c847b 100644
+----- a/frontend/public/dashboard.html
+--+++ b/frontend/public/dashboard.html
+--@@ -35,17 +35,17 @@
+--         <div class="card">
+--             <h3>Subjects</h3>
+--             <div class="subjects">
+---                <div class="subject-card">
+--+                <div class="subject-card" onclick="window.location.href='/subject.html?id=physics'" style="cursor: pointer;">
+--                     <div class="subject-icon">⚛️</div>
+--                     <div><strong>Physics</strong></div>
+--                     <div style="color: #666;">by Jatin Goyal</div>
+--                 </div>
+---                <div class="subject-card">
+--+                <div class="subject-card" onclick="window.location.href='/subject.html?id=chemistry'" style="cursor: pointer;">
+--                     <div class="subject-icon">🧪</div>
+--                     <div><strong>Chemistry</strong></div>
+--                     <div style="color: #666;">by Sandeep Vaishnava</div>
+--                 </div>
+---                <div class="subject-card">
+--+                <div class="subject-card" onclick="window.location.href='/subject.html?id=mathematics'" style="cursor: pointer;">
+--                     <div class="subject-icon">📐</div>
+--                     <div><strong>Mathematics</strong></div>
+--                     <div style="color: #666;">by Binay Singh</div>
 --diff --git a/model.patch b/model.patch
---index 2346d2a..e69de29 100644
+--index e9a601b..e69de29 100644
 ----- a/model.patch
 --+++ b/model.patch
---@@ -1,41 +0,0 @@
+--@@ -1,46 +0,0 @@
 ---diff --git a/model.patch b/model.patch
----index 5fd862a..e69de29 100644
+---index 2346d2a..e69de29 100644
 ------ a/model.patch
 ---+++ b/model.patch
----@@ -1,36 +0,0 @@
+---@@ -1,41 +0,0 @@
 ----diff --git a/model.patch b/model.patch
-----index 5589fcd..e69de29 100644
+----index 5fd862a..e69de29 100644
 ------- a/model.patch
 ----+++ b/model.patch
-----@@ -1,31 +0,0 @@
+----@@ -1,36 +0,0 @@
 -----diff --git a/model.patch b/model.patch
------index e1c2978..e69de29 100644
+-----index 5589fcd..e69de29 100644
 -------- a/model.patch
 -----+++ b/model.patch
------@@ -1,26 +0,0 @@
-------diff --git a/backend/server.py b/backend/server.py
-------index 362b3b0..2bd6296 100644
---------- a/backend/server.py
-------+++ b/backend/server.py
-------@@ -292,9 +292,19 @@ async def google_auth_callback(session_id: str):
-------     
-------     # Get full user data
-------     user = await db.users.find_one({"user_id": user_id}, {"_id": 0})
--------    user.pop("password_hash", None)
-------     
--------    response = JSONResponse(content={"user": user, "session_token": user_data["session_token"]})
-------+    # Prepare user response
-------+    user_response = {
-------+        "user_id": user["user_id"],
-------+        "email": user["email"],
-------+        "name": user["name"],
-------+        "role": user["role"],
-------+        "grade": user.get("grade"),
-------+        "picture": user.get("picture"),
-------+        "created_at": user["created_at"].isoformat() if isinstance(user["created_at"], datetime) else user["created_at"]
-------+    }
-------+    
-------+    response = JSONResponse(content={"user": user_response, "session_token": user_data["session_token"]})
-------     response.set_cookie(
-------         key="session_token",
-------         value=user_data["session_token"],
+-----@@ -1,31 +0,0 @@
+------diff --git a/model.patch b/model.patch
+------index e1c2978..e69de29 100644
+--------- a/model.patch
+------+++ b/model.patch
+------@@ -1,26 +0,0 @@
+-------diff --git a/backend/server.py b/backend/server.py
+-------index 362b3b0..2bd6296 100644
+---------- a/backend/server.py
+-------+++ b/backend/server.py
+-------@@ -292,9 +292,19 @@ async def google_auth_callback(session_id: str):
+-------     
+-------     # Get full user data
+-------     user = await db.users.find_one({"user_id": user_id}, {"_id": 0})
+--------    user.pop("password_hash", None)
+-------     
+--------    response = JSONResponse(content={"user": user, "session_token": user_data["session_token"]})
+-------+    # Prepare user response
+-------+    user_response = {
+-------+        "user_id": user["user_id"],
+-------+        "email": user["email"],
+-------+        "name": user["name"],
+-------+        "role": user["role"],
+-------+        "grade": user.get("grade"),
+-------+        "picture": user.get("picture"),
+-------+        "created_at": user["created_at"].isoformat() if isinstance(user["created_at"], datetime) else user["created_at"]
+-------+    }
+-------+    
+-------+    response = JSONResponse(content={"user": user_response, "session_token": user_data["session_token"]})
+-------     response.set_cookie(
+-------         key="session_token",
+-------         value=user_data["session_token"],
