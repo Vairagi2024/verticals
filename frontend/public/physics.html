@@ -28,7 +28,7 @@
 </head>
 <body>
     <div class="header">
-        <button class="back-btn" onclick="window.location.href='/dashboard.html'">← Back</button>
+        <button class="back-btn" onclick="window.location.href='/api/page/api/page/dashboard.html'">← Back</button>
         <h1>⚛️ Physics</h1>
         <p>by Jatin Goyal</p>
     </div>
@@ -76,7 +76,7 @@
         </div>
         
         <div id="tests" class="section">
-            <div class="card" onclick="window.location.href='/test-attempt.html?id=test1'" style="cursor: pointer;">
+            <div class="card" onclick="window.location.href='/api/page/api/page/test-attempt.html?id=test1'" style="cursor: pointer;">
                 <div class="chapter-title">📝 Chapter 1 Test</div>
                 <div class="chapter-meta" style="margin-top: 10px;">20 Questions • 30 Minutes • MCQ</div>
                 <button class="btn" style="margin-top: 12px;">Start Test</button>
@@ -84,7 +84,7 @@
         </div>
     </div>
     
-    <button class="fab" onclick="window.location.href='/upload-content.html?subject=physics'" id="uploadBtn" style="display: none;">+</button>
+    <button class="fab" onclick="window.location.href='/api/page/api/page/upload-content.html?subject=physics'" id="uploadBtn" style="display: none;">+</button>
     
     <script>
         const user = JSON.parse(localStorage.getItem('user') || 'null');

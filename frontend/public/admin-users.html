@@ -51,7 +51,7 @@
 </head>
 <body>
     <div class="header">
-        <button class="back-btn" onclick="window.location.href='/dashboard.html'">← Back to Dashboard</button>
+        <button class="back-btn" onclick="window.location.href='/api/page/api/page/dashboard.html'">← Back to Dashboard</button>
         <h1>👥 Manage Users</h1>
     </div>
     
@@ -107,7 +107,7 @@
         
         if (!user || user.role !== 'admin') {
             alert('Access denied. Admin only.');
-            window.location.href = '/dashboard.html';
+            window.location.href = '/api/page/dashboard.html';
         }
         
         // Load users from API

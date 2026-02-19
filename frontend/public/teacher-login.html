@@ -55,7 +55,7 @@
             </form>
             
             <div class="back-link">
-                <a href="/">← Back to Role Selection</a>
+                <a href="/api/page/">← Back to Role Selection</a>
             </div>
         </div>
     </div>
@@ -79,7 +79,7 @@
                     const data = await response.json();
                     localStorage.setItem('session_token', data.session_token);
                     localStorage.setItem('user', JSON.stringify(data.user));
-                    window.location.href = '/dashboard.html';
+                    window.location.href = '/api/page/dashboard.html';
                 } else {
                     const error = await response.json();
                     errorDiv.textContent = error.detail || 'Login failed';
