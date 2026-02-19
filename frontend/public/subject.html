@@ -1,19 +1,19 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Physics - Vertical Studies</title>
+    <title>Subject - Vertical Studies</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #F8F9FB; }
-        .header { background: #FF6B6B; color: white; padding: 20px; }
+        .header { color: white; padding: 20px; }
         .header h1 { font-size: 28px; }
         .header p { opacity: 0.9; margin-top: 5px; }
         .back-btn { background: rgba(255,255,255,0.3); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; }
         .container { max-width: 800px; margin: 20px auto; padding: 20px; }
         .tabs { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid #e0e0e0; }
         .tab { padding: 12px 24px; cursor: pointer; border: none; background: none; font-size: 16px; font-weight: 500; color: #666; }
-        .tab.active { color: #FF6B6B; border-bottom: 3px solid #FF6B6B; }
+        .tab.active { border-bottom: 3px solid currentColor; }
         .section { display: none; }
         .section.active { display: block; }
         .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 16px; }
@@ -21,26 +21,27 @@
         .chapter-card:hover { background: #f5f5f5; }
         .chapter-title { font-size: 18px; font-weight: 600; }
         .chapter-meta { color: #666; font-size: 14px; margin-top: 4px; }
-        .btn { padding: 10px 20px; background: #FF6B6B; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; }
-        .btn:hover { background: #e55a5a; }
+        .btn { padding: 10px 20px; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; }
+        .btn:hover { opacity: 0.9; }
         .btn-secondary { background: #e0e0e0; color: #333; }
         .empty { text-align: center; padding: 40px; color: #999; }
         .upload-section { margin-top: 20px; }
         .form-group { margin-bottom: 16px; }
         label { display: block; margin-bottom: 8px; font-weight: 500; }
         input, select, textarea { width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 6px; font-size: 14px; }
-        .fab { position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; background: #FF6B6B; border-radius: 50%; border: none; color: white; font-size: 28px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+        .fab { position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; border-radius: 50%; border: none; color: white; font-size: 28px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+        .loading { text-align: center; padding: 40px; color: #666; }
     </style>
 </head>
 <body>
-    <div class="header">
+    <div class="header" id="header">
         <button class="back-btn" onclick="window.location.href='/dashboard.html'">← Back</button>
-        <h1>⚛️ Physics</h1>
-        <p>by Jatin Goyal</p>
+        <h1 id="subjectTitle">Loading...</h1>
+        <p id="teacherName">Loading...</p>
     </div>
     
     <div class="container">
-        <div class="tabs">
+        <div class="tabs" id="tabs">
             <button class="tab active" onclick="showTab('chapters')">Chapters</button>
             <button class="tab" onclick="showTab('videos')">Videos</button>
             <button class="tab" onclick="showTab('tests')">Tests</button>
@@ -48,53 +49,17 @@
         
         <!-- Chapters Section -->
         <div id="chapters" class="section active">
-            <div class="card chapter-card" onclick="window.location.href='/chapter.html?id=ch1'">
-                <div>
-                    <div class="chapter-title">Chapter 1: Motion in a Straight Line</div>
-                    <div class="chapter-meta">8 topics • 12 videos</div>
-                </div>
-                <span style="font-size: 20px;">→</span>
-            </div>
-            <div class="card chapter-card" onclick="window.location.href='/chapter.html?id=ch2'">
-                <div>
-                    <div class="chapter-title">Chapter 2: Motion in a Plane</div>
-                    <div class="chapter-meta">6 topics • 10 videos</div>
-                </div>
-                <span style="font-size: 20px;">→</span>
-            </div>
-            <div class="card chapter-card" onclick="window.location.href='/chapter.html?id=ch3'">
-                <div>
-                    <div class="chapter-title">Chapter 3: Laws of Motion</div>
-                    <div class="chapter-meta">10 topics • 15 videos</div>
-                </div>
-                <span style="font-size: 20px;">→</span>
-            </div>
+            <div class="loading">Loading chapters...</div>
         </div>
         
         <!-- Videos Section -->
         <div id="videos" class="section">
-            <div class="card">
-                <div class="chapter-title">📹 Recent Videos</div>
-                <div class="chapter-meta" style="margin-top: 10px;">Introduction to Kinematics - 45 mins</div>
-            </div>
-            <div class="card">
-                <div class="chapter-title">📹 Newton's First Law</div>
-                <div class="chapter-meta" style="margin-top: 10px;">Concept & Examples - 38 mins</div>
-            </div>
+            <div class="loading">Loading videos...</div>
         </div>
         
         <!-- Tests Section -->
         <div id="tests" class="section">
-            <div class="card" onclick="window.location.href='/test-attempt.html?id=test1'" style="cursor: pointer;">
-                <div class="chapter-title">📝 Chapter 1 Test</div>
-                <div class="chapter-meta" style="margin-top: 10px;">20 Questions • 30 Minutes • MCQ</div>
-                <button class="btn" style="margin-top: 12px;">Start Test</button>
-            </div>
-            <div class="card" onclick="window.location.href='/test-attempt.html?id=test2'" style="cursor: pointer;">
-                <div class="chapter-title">📝 Motion Full Test</div>
-                <div class="chapter-meta" style="margin-top: 10px;">25 Questions • 40 Minutes • MCQ</div>
-                <button class="btn" style="margin-top: 12px;">Start Test</button>
-            </div>
+            <div class="loading">Loading tests...</div>
         </div>
     </div>
     
@@ -102,25 +67,292 @@
     <button class="fab" onclick="showUploadOptions()" id="uploadBtn" style="display: none;">+</button>
     
     <script>
-        // Check if user is teacher
+        // Subject configuration - icons, colors, and sample chapters
+        const subjectConfig = {
+            physics: {
+                icon: '⚛️',
+                color: '#FF6B6B',
+                sampleChapters: [
+                    { name: 'Motion in a Straight Line', topics: 8, videos: 12 },
+                    { name: 'Motion in a Plane', topics: 6, videos: 10 },
+                    { name: 'Laws of Motion', topics: 10, videos: 15 },
+                    { name: 'Work, Energy and Power', topics: 7, videos: 11 }
+                ],
+                sampleVideos: [
+                    { title: 'Introduction to Kinematics', duration: '45 mins' },
+                    { title: "Newton's First Law", duration: '38 mins' }
+                ],
+                sampleTests: [
+                    { title: 'Chapter 1 Test', questions: 20, duration: 30 },
+                    { title: 'Motion Full Test', questions: 25, duration: 40 }
+                ]
+            },
+            chemistry: {
+                icon: '🧪',
+                color: '#4ECDC4',
+                sampleChapters: [
+                    { name: 'Some Basic Concepts of Chemistry', topics: 6, videos: 8 },
+                    { name: 'Structure of Atom', topics: 8, videos: 12 },
+                    { name: 'Classification of Elements', topics: 5, videos: 7 },
+                    { name: 'Chemical Bonding', topics: 9, videos: 14 }
+                ],
+                sampleVideos: [
+                    { title: 'Mole Concept Basics', duration: '42 mins' },
+                    { title: 'Atomic Structure', duration: '35 mins' }
+                ],
+                sampleTests: [
+                    { title: 'Chapter 1 Test', questions: 20, duration: 30 },
+                    { title: 'Atomic Structure Test', questions: 25, duration: 40 }
+                ]
+            },
+            mathematics: {
+                icon: '📐',
+                color: '#95E1D3',
+                sampleChapters: [
+                    { name: 'Sets and Relations', topics: 5, videos: 8 },
+                    { name: 'Trigonometric Functions', topics: 7, videos: 12 },
+                    { name: 'Complex Numbers', topics: 6, videos: 9 },
+                    { name: 'Quadratic Equations', topics: 8, videos: 11 }
+                ],
+                sampleVideos: [
+                    { title: 'Introduction to Sets', duration: '38 mins' },
+                    { title: 'Trigonometry Basics', duration: '45 mins' }
+                ],
+                sampleTests: [
+                    { title: 'Sets & Relations Test', questions: 20, duration: 30 },
+                    { title: 'Trigonometry Full Test', questions: 25, duration: 40 }
+                ]
+            }
+        };
+
+        // Get subject ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const subjectId = urlParams.get('id') || 'physics';
+        
+        // Get subject data
+        let subjectData = null;
+        let config = subjectConfig[subjectId] || subjectConfig.physics;
+
+        // Check if user is logged in
         const user = JSON.parse(localStorage.getItem('user') || 'null');
+        const sessionToken = localStorage.getItem('session_token');
+        
+        if (!user) {
+            window.location.href = '/';
+        }
+
+        // Show upload button for teachers/admins
         if (user && (user.role === 'teacher' || user.role === 'admin')) {
             document.getElementById('uploadBtn').style.display = 'block';
         }
-        
+
+        // Load subject data from API
+        async function loadSubjectData() {
+            try {
+                const response = await fetch('/api/content/subjects', {
+                    headers: {
+                        'Authorization': `Bearer ${sessionToken}`
+                    }
+                });
+                
+                if (response.ok) {
+                    const subjects = await response.json();
+                    subjectData = subjects.find(s => s.subject_id === subjectId);
+                    
+                    if (subjectData) {
+                        renderSubjectHeader();
+                        loadChapters();
+                        loadTests();
+                        renderVideos();
+                    } else {
+                        // Fallback to default config
+                        renderDefaultSubject();
+                    }
+                } else {
+                    renderDefaultSubject();
+                }
+            } catch (error) {
+                console.error('Error loading subject:', error);
+                renderDefaultSubject();
+            }
+        }
+
+        function renderSubjectHeader() {
+            const header = document.getElementById('header');
+            const title = document.getElementById('subjectTitle');
+            const teacher = document.getElementById('teacherName');
+            
+            header.style.background = subjectData?.color || config.color;
+            title.textContent = `${config.icon} ${subjectData?.name || capitalizeFirst(subjectId)}`;
+            teacher.textContent = `by ${subjectData?.teacher_name || 'Teacher'}`;
+            
+            // Update page title
+            document.title = `${subjectData?.name || capitalizeFirst(subjectId)} - Vertical Studies`;
+            
+            // Update tab colors
+            document.querySelectorAll('.tab.active').forEach(tab => {
+                tab.style.color = subjectData?.color || config.color;
+            });
+            
+            // Update button colors
+            document.querySelectorAll('.btn').forEach(btn => {
+                btn.style.background = subjectData?.color || config.color;
+            });
+            
+            document.getElementById('uploadBtn').style.background = subjectData?.color || config.color;
+        }
+
+        function renderDefaultSubject() {
+            const header = document.getElementById('header');
+            const title = document.getElementById('subjectTitle');
+            const teacher = document.getElementById('teacherName');
+            
+            header.style.background = config.color;
+            title.textContent = `${config.icon} ${capitalizeFirst(subjectId)}`;
+            
+            // Get teacher name based on subject
+            const teacherNames = {
+                physics: 'Jatin Goyal',
+                chemistry: 'Sandeep Vaishnava',
+                mathematics: 'Binay Singh'
+            };
+            teacher.textContent = `by ${teacherNames[subjectId] || 'Teacher'}`;
+            
+            document.title = `${capitalizeFirst(subjectId)} - Vertical Studies`;
+            
+            renderSampleChapters();
+            renderVideos();
+            renderSampleTests();
+        }
+
+        async function loadChapters() {
+            const container = document.getElementById('chapters');
+            try {
+                const response = await fetch(`/api/content/chapters/${subjectId}`, {
+                    headers: { 'Authorization': `Bearer ${sessionToken}` }
+                });
+                
+                if (response.ok) {
+                    const chapters = await response.json();
+                    if (chapters.length > 0) {
+                        renderChapters(chapters);
+                    } else {
+                        renderSampleChapters();
+                    }
+                } else {
+                    renderSampleChapters();
+                }
+            } catch (error) {
+                renderSampleChapters();
+            }
+        }
+
+        function renderChapters(chapters) {
+            const container = document.getElementById('chapters');
+            container.innerHTML = chapters.map((ch, index) => `
+                <div class="card chapter-card" onclick="window.location.href='/chapter.html?id=${ch.chapter_id}&subject=${subjectId}'">
+                    <div>
+                        <div class="chapter-title">Chapter ${index + 1}: ${ch.chapter_name}</div>
+                        <div class="chapter-meta">${ch.description || 'Click to view topics'}</div>
+                    </div>
+                    <span style="font-size: 20px;">→</span>
+                </div>
+            `).join('');
+        }
+
+        function renderSampleChapters() {
+            const container = document.getElementById('chapters');
+            container.innerHTML = config.sampleChapters.map((ch, index) => `
+                <div class="card chapter-card" onclick="window.location.href='/chapter.html?subject=${subjectId}&ch=${index + 1}'">
+                    <div>
+                        <div class="chapter-title">Chapter ${index + 1}: ${ch.name}</div>
+                        <div class="chapter-meta">${ch.topics} topics • ${ch.videos} videos</div>
+                    </div>
+                    <span style="font-size: 20px;">→</span>
+                </div>
+            `).join('');
+        }
+
+        function renderVideos() {
+            const container = document.getElementById('videos');
+            container.innerHTML = config.sampleVideos.map(video => `
+                <div class="card">
+                    <div class="chapter-title">📹 ${video.title}</div>
+                    <div class="chapter-meta" style="margin-top: 10px;">Duration: ${video.duration}</div>
+                </div>
+            `).join('');
+        }
+
+        async function loadTests() {
+            const container = document.getElementById('tests');
+            try {
+                const response = await fetch(`/api/tests?subject_id=${subjectId}`, {
+                    headers: { 'Authorization': `Bearer ${sessionToken}` }
+                });
+                
+                if (response.ok) {
+                    const tests = await response.json();
+                    if (tests.length > 0) {
+                        renderTests(tests);
+                    } else {
+                        renderSampleTests();
+                    }
+                } else {
+                    renderSampleTests();
+                }
+            } catch (error) {
+                renderSampleTests();
+            }
+        }
+
+        function renderTests(tests) {
+            const container = document.getElementById('tests');
+            const color = subjectData?.color || config.color;
+            container.innerHTML = tests.map(test => `
+                <div class="card" onclick="window.location.href='/test-attempt.html?id=${test.test_id}'" style="cursor: pointer;">
+                    <div class="chapter-title">📝 ${test.title}</div>
+                    <div class="chapter-meta" style="margin-top: 10px;">${test.total_marks} Marks • ${test.duration_mins} Minutes • MCQ</div>
+                    <button class="btn" style="margin-top: 12px; background: ${color};">Start Test</button>
+                </div>
+            `).join('');
+        }
+
+        function renderSampleTests() {
+            const container = document.getElementById('tests');
+            const color = config.color;
+            container.innerHTML = config.sampleTests.map((test, index) => `
+                <div class="card" onclick="window.location.href='/test-attempt.html?id=test${index + 1}&subject=${subjectId}'" style="cursor: pointer;">
+                    <div class="chapter-title">📝 ${test.title}</div>
+                    <div class="chapter-meta" style="margin-top: 10px;">${test.questions} Questions • ${test.duration} Minutes • MCQ</div>
+                    <button class="btn" style="margin-top: 12px; background: ${color};">Start Test</button>
+                </div>
+            `).join('');
+        }
+
         function showTab(tabName) {
             // Hide all sections
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(t => {
+                t.classList.remove('active');
+                t.style.color = '#666';
+            });
             
             // Show selected section
             document.getElementById(tabName).classList.add('active');
             event.target.classList.add('active');
+            event.target.style.color = subjectData?.color || config.color;
         }
         
         function showUploadOptions() {
-            window.location.href = '/upload-content.html?subject=physics';
+            window.location.href = `/upload-content.html?subject=${subjectId}`;
         }
+
+        function capitalizeFirst(str) {
+            return str.charAt(0).toUpperCase() + str.slice(1);
+        }
+
+        // Initialize page
+        loadSubjectData();
     </script>
 </body>
 </html>
