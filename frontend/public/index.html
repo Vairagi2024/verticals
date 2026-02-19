@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Vertical Studies</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #F8F9FB; }
+        .container { max-width: 600px; margin: 50px auto; padding: 20px; }
+        .header { text-align: center; margin-bottom: 40px; }
+        .header h1 { color: #6C3AE0; font-size: 40px; margin-bottom: 10px; }
+        .header p { color: #666; font-size: 18px; margin-bottom: 5px; }
+        .subtitle { color: #333; font-size: 20px; font-weight: 600; margin-top: 20px; }
+        .roles { display: flex; flex-direction: column; gap: 20px; }
+        .role-card { background: white; padding: 30px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); text-align: center; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; text-decoration: none; }
+        .role-card:hover { transform: translateY(-5px); box-shadow: 0 8px 30px rgba(0,0,0,0.15); }
+        .role-icon { width: 80px; height: 80px; margin: 0 auto 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 50px; }
+        .admin .role-icon { background: #6C3AE0; }
+        .teacher .role-icon { background: #4A90E2; }
+        .student .role-icon { background: #4ECDC4; }
+        .role-title { font-size: 28px; font-weight: bold; margin-bottom: 10px; }
+        .admin .role-title { color: #6C3AE0; }
+        .teacher .role-title { color: #4A90E2; }
+        .student .role-title { color: #4ECDC4; }
+        .role-desc { color: #666; font-size: 16px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Vertical Studies</h1>
+            <p>Sector 44 D, Chandigarh</p>
+            <p class="subtitle">Select Your Role to Login</p>
+        </div>
+        
+        <div class="roles">
+            <a href="/admin-login.html" class="role-card admin">
+                <div class="role-icon">👑</div>
+                <div class="role-title">Admin</div>
+                <div class="role-desc">Institute Administrator</div>
+            </a>
+            
+            <a href="/teacher-login.html" class="role-card teacher">
+                <div class="role-icon">👨‍🏫</div>
+                <div class="role-title">Teacher</div>
+                <div class="role-desc">Upload Content & Create Tests</div>
+            </a>
+            
+            <a href="/student-login.html" class="role-card student">
+                <div class="role-icon">🎓</div>
+                <div class="role-title">Student</div>
+                <div class="role-desc">Access Lectures & Tests</div>
+            </a>
+        </div>
+    </div>
+</body>
+</html>
