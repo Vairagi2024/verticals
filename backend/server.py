@@ -1,5 +1,6 @@
 from fastapi import FastAPI, APIRouter, HTTPException, Depends, Request, Response, UploadFile, File, Form
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, FileResponse, HTMLResponse
+from fastapi.staticfiles import StaticFiles
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -14,6 +15,7 @@ import bcrypt
 import base64
 
 ROOT_DIR = Path(__file__).parent
+FRONTEND_DIR = ROOT_DIR.parent / "frontend" / "public"
 load_dotenv(ROOT_DIR / '.env')
 
 # MongoDB connection
