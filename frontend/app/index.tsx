@@ -2,13 +2,10 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Text, Button } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 
 export default function Index() {
-  const openLogin = (role: string) => {
-    if (typeof window !== 'undefined') {
-      window.location.href = `/login/${role}`;
-    }
-  };
+  const router = useRouter();
 
   return (
     <View style={styles.container}>
@@ -32,7 +29,7 @@ export default function Index() {
           </Text>
           <Button
             mode="contained"
-            onPress={() => openLogin('admin')}
+            onPress={() => router.push('/login/admin')}
             buttonColor="#fff"
             textColor="#6C3AE0"
             style={styles.button}
@@ -48,7 +45,7 @@ export default function Index() {
           </Text>
           <Button
             mode="contained"
-            onPress={() => openLogin('teacher')}
+            onPress={() => router.push('/login/teacher')}
             buttonColor="#fff"
             textColor="#4A90E2"
             style={styles.button}
@@ -64,7 +61,7 @@ export default function Index() {
           </Text>
           <Button
             mode="contained"
-            onPress={() => openLogin('student')}
+            onPress={() => router.push('/login/student')}
             buttonColor="#fff"
             textColor="#4ECDC4"
             style={styles.button}
