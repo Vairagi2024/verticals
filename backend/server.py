@@ -20,6 +20,7 @@ load_dotenv(ROOT_DIR / '.env')
 
 # MongoDB connection
 mongo_url = os.environ['MONGO_URL']
+mongodb+srv://chemistrybysandeep_db_user:PP9pCZTQhLEKuhQE@cluster0.qp5u9uk.mongodb.net/chemistrydb?retryWrites=true&w=majority
 client = AsyncIOMotorClient(mongo_url)
 db = client['vertical_studies']
 
