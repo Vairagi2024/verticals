@@ -6,3 +6,4 @@ pymongo
 passlib
 python-jose
 bcrypt
+python-multipart
